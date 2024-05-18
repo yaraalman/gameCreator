@@ -1,0 +1,26 @@
+.contactUsImg{
+    float:right;
+    height: 320px;
+    width: 40%;
+    margin-top: -20px;
+    margin-left:0px;
+}
+
+#contactUsPage p{
+    margin-top: -20px;
+}
+
+#ContactUsForm #submit{
+    margin-left: -100px;
+  }
+
+
+
+#ContactUsForm{
+    margin-top: -20px;
+    margin-left: 100px;
+}
+
+#ContactUsForm #FirstName{
+    margin-left: -160px;
+}

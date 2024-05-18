@@ -1,0 +1,33 @@
+.signUpImg{
+    float:right;
+    height: 390px;
+    width: 40%;
+    margin-top: 0px;
+    margin-left: 0px;
+}
+
+#SignUpForm{
+  margin-left: 280px;
+}
+
+.inputFild  {
+  margin-top:20px;
+  width: 400px; 
+}
+
+#LastName input,#FirstName input{
+  width: 180px;
+}
+#FirstName {
+  margin-left: -210px;
+}
+#LastName{
+  margin-top: -68px;
+  margin-left: 130px;
+}
+ #SignUpForm #submit{
+  margin-left: -100px;
+}
+
+
+

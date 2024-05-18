@@ -1,0 +1,70 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
+body {
+  background: linear-gradient( #3EC7F2 , white);
+  overflow:scroll; 
+}
+h1,h3{
+  font-family:'Luckiest Guy';
+  color: #1042b5 ;
+}
+p{
+  font-family:'Gill Sans MT';
+}
+img{
+  width:250px;
+  height:250px;
+}
+ul {
+  list-style-type: none;
+}
+.icon{
+  width:20px;
+  height:20px;
+}
+
+a {color: #193471 ;
+color: #193471 ;
+color: #193471 ;
+cursor: pointer;
+text-decoration: none;
+font-family:'Gill Sans MT';
+font-size: 15px; 
+}
+a:hover {
+color: #2fb3e3; 
+font-size: 20px; 
+}
+
+.inputFild {
+  font-family:'Gill Sans MT';
+  margin-top:30px;
+  margin-left:5px ;
+  height: 25px;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius:15px;
+  font-size: 17px;
+}
+
+.inputFild:focus {
+  outline: none;
+  border-color: #007bff; 
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+
+}
+
+#submit{
+  height: 40px;
+  width: 150px;
+  margin-top:-200px;
+  margin-left:240px ;
+  border-radius:15px; 
+  background-color:#eff800;
+  font-family:'Luckiest Guy';
+  color: #1042b5 ;
+  font-size: 18px;
+}
+
+

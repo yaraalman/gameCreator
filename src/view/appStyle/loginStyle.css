@@ -1,0 +1,42 @@
+
+.loginImg{
+    float:left;
+    height: 390px;
+    width: 50%;
+    margin-top:0px;
+    margin-left: 30px;
+}
+.formIcon{
+    margin-left:-100px ;
+    width:25px;
+    height:25px;
+}
+
+#LoginForm .inputFild {
+    width: 300px; 
+  }
+
+#submit{
+    margin-top:20px;
+    margin-left:100px;
+}
+
+#signUp{
+    border: 2px solid #0c0c0c;
+    margin-left: 630px;
+    margin-top: -40px;
+    height: 38px;
+    width: 150px;
+    border-radius:15px;  
+    background-color: #3360CD;
+    display:flex;
+    justify-content: center;
+    align-items: center; 
+   
+}
+#signUp a {
+    font-family:'Luckiest Guy';
+    color: #ffffff ;
+}
+
+
