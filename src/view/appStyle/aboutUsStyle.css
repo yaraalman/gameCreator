@@ -1,23 +1,30 @@
 .aboutUsImg {
   position: absolute;
-  margin-top: 10px;
-  margin-left: 200px;
+  margin-top: 30px;
+  margin-left: 270px;
   float:right;
-  width: 40%; 
-  height: 375px;
+  width: 35%; 
+  height: 80%;
   object-fit: cover; 
-  opacity: 0.8; 
+  z-index:-1 ;
 }
 
 .text-container {
-    width: 75%; 
-    height: 320px;
+    width: 70%; 
+    height: 280px;
     margin-left:50px ;
-    margin-top:-15px; 
+    margin-top:-10px; 
+    border-radius: 15px;
     overflow:scroll; 
     padding:10px;
+    text-align: left;
+    background: rgba(241, 235, 235, 0.404);
     white-space:unset;
   }
+  .text-container::-webkit-scrollbar {
+    display: none;
+}
+
 
 
 

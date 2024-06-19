@@ -1,0 +1,88 @@
+
+.creatorPage{
+    background: linear-gradient( #3EC7F2 , white);
+}
+
+#creator{
+    background:rgb(162, 72, 72);
+    border-radius:15px; 
+    margin: 5px;
+    display: flex;
+    height: 390px;
+    width: 1080px;
+}
+
+.noCodelist{
+    background:rgb(255, 3, 3);
+    border: black 2px;
+    border-radius:15px; 
+    margin: 5px;
+    overflow:scroll;
+    width: 30%;
+   
+}
+.user-no-Code{
+    background:green;
+    border: black 2px;
+    border-radius:15px; 
+    margin: 5px;
+    overflow:scroll;
+    width: 30%;
+    
+}
+
+.user-no-Code ::-webkit-scrollbar {
+    display: none;
+}
+.noCodelist ::-webkit-scrollbar {
+    display: none;
+}
+
+.game{
+    background:#9a1dc0;
+    border-radius:15px; 
+    margin: 5px;
+    width: 40%;
+  
+
+}
+#gameScreen{
+    background:rgb(54, 9, 167);
+    height: 200px;
+    border-radius:15px; 
+    margin: 5px;
+   
+   
+
+}
+.user-controler {
+    background:#a24848;
+    border-radius:15px; 
+    margin: 5px;
+    height: 165px;
+    display: flex;
+
+}
+
+#gameCharacters {
+    background:yellow;
+    border-radius:15px; 
+    margin: 5px;
+    width:85%;
+}
+#menus{
+    background:rgb(250, 248, 248);
+    border-radius:15px; 
+    margin: 5px;
+    width:15%;
+}
+
+#menus div {
+    background:rgb(12, 187, 241);
+    margin: 10px;
+    border-radius:50%; 
+    height: 20px;
+    padding: 10px;
+    box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.5);
+
+}

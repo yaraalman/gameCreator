@@ -1,28 +1,48 @@
 .homeBackground{
-    height: 450px;
-    width: 100%;
-    position: fixed;
-    margin-left: -535px;
+  height: 480px;
+  width: 100%;
+  position: relative;
+  z-index:-1 ;
+ ;
 }
+/*
+.homePage{
+  height: 450px;
+  width: 100%;
+  background-position: center; /* Center the image 
+  background-size: cover;
+  background-image: url("../../../public/media/Appbackgound/marioBackground.jpg");
+
+}*/
+
 .list{
-   margin-left: 200px; 
-   margin-top:30px;
-   position: fixed;
+  width: 200px;
+  padding: 25px;
+  border-radius:15px; 
+  margin-left:180px; 
+  margin-top:-420px;
+ 
 }
 
-#login a{
-    color: #2D7826;
-    font-family:'Luckiest Guy';
+a #login {
+    color: #ffffff;
+    margin-left:20px;
 }
-.Buttons{
-    width: 135px; 
-    height: 40px;
-    margin-top: 10px;
-    display:flex;
-    justify-content: center;
-    align-items: center; 
-    border-radius:15px; 
-    background-color:#91ECFF;
-    color: hsl(222, 61%, 48%);
+
+a #letsCreate{
+  color: #eff800;
+
+}
+
+a #CreativePlay{
+  color: #1042b5;
+
+}
+
+a #socialPanel{
+  color: #98171d;
   
-  }
+}
+
+
+  

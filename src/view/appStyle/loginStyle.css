@@ -1,13 +1,27 @@
-
+.loginPage h1{
+    margin-right: 100px;
+}
 .loginImg{
     float:left;
-    height: 390px;
-    width: 50%;
-    margin-top:0px;
-    margin-left: 30px;
+    height: 430px;
+    width: 30%;
+    margin-top:-50px;
+    margin-left: 150px;
 }
+/*#LoginForm{ 
+    background: rgb(242, 245, 245);
+    width: 400px;
+    height: 250px;
+    margin-top:0px;
+    margin-left: 500px;
+}*/
+#LoginForm{ 
+    margin-top:-15px;
+}
+
 .formIcon{
     margin-left:-100px ;
+    margin-bottom: -5px;
     width:25px;
     height:25px;
 }
@@ -16,27 +30,35 @@
     width: 300px; 
   }
 
-#submit{
+ #LoginForm #submit{
+    position: absolute ; 
+    margin-left : 590px;
     margin-top:20px;
-    margin-left:100px;
+    
 }
 
-#signUp{
-    border: 2px solid #0c0c0c;
-    margin-left: 630px;
-    margin-top: -40px;
-    height: 38px;
+ #signUp{
+    margin-left: 760px;
+    margin-top: 20px;
+    height: 40px;
     width: 150px;
     border-radius:15px;  
     background-color: #3360CD;
-    display:flex;
-    justify-content: center;
-    align-items: center; 
    
 }
-#signUp a {
+ 
+#LoginForm a .button-text{
     font-family:'Luckiest Guy';
     color: #ffffff ;
+    font-size: 16px;
+    margin-top: -25px;
+    margin-left: 20px;
+}
+
+
+#LoginForm .icon{
+    margin-left: -80px;
+    margin-top: 25px;
 }
 
 

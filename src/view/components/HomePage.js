@@ -1,37 +1,61 @@
 import { Component } from 'react';
-import media from '../myJson/media';
-import buttons from'../myJson/buttons.js';
-import menus from'../myJson/menus.js';
 
 import '../appStyle/main.css';
 import '../appStyle/homeStyle.css';
 
 export default class HomePage extends Component {
-   
-    render(){
-        let homeButtons =[];
-        let homeMenu = menus.find(myMenu=> myMenu.menuName === "homeMenu")
-        let homeImg = media.find(myMedia =>(myMedia.mediaName ==="homeBackground"));
-        
-        for (const button of buttons){
-                if(homeMenu.buttons.includes(button.buttonId)){
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            homeMenu: null,
+            homeImg:null,
+        };
+    }
+
+    componentDidMount() {
+        const pageName="homePage";
+        fetch(`http://localhost:3001/menus/${pageName}`)
+
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                this.setState({ homeMenu:data.menubuttons , homeImg:data.homeImg});
+            })
+            .catch(error => {
+                console.error('Error fetching page data:', error);
+            });
+    }
+
+    render() {
+        const homeMenu  = this.state.homeMenu;
+        const homeImg  = this.state.homeImg;
+
+        let homeButtons = []; 
+       if (homeMenu){
+            for (const button of homeMenu) {
                     homeButtons.push(
-                                <div className='Buttons' id={button.buttonName}>  
-                                    <a href={button.url} > 
-                                        <img className="icon" src={button.iconImg} alt="buttonIcon"/>
-                                        {button.text}
-                                    </a >
-                                </div>
-                            );
-                }
-          }
-        return (
-             <div className="homePage">
-                <img className={homeImg.mediaName} src={homeImg.url} alt={homeImg.mediaName}/>       
-                <div className="list">
-                    {homeButtons}
-                </div>
-             </div>  
-        );
+                        <div className='Buttons' >
+                            <a href={button.url} >
+                                <img className="icon" src={button.iconImg} alt="buttonIcon"/>
+                                <h5 className="button-text" id= {button.buttonName}> {button.text} </h5>
+                            </a >
+                        </div>
+                    );
+            }
+        }
+        //
+        if (homeImg){
+                return (
+                    <div className="homePage">  
+                    <img className={homeImg.mediaName} src={homeImg.url} alt={homeImg.mediaName}/>   
+                        <div className="list">
+                            {homeButtons}
+                        </div>
+                    </div>  
+                );
+            
+        
+        }
     }
 }
