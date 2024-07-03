@@ -1,0 +1,89 @@
+
+/* The Modal (background) */
+.modal {
+    display: block; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 50px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 470px; ;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+
+  /* Modal Content */
+  .modal-content {
+    position: relative;
+    background-color: #929eeb;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    border-radius:15px;
+    width: 80%;
+    height: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  }
+
+
+  /* The Close Button */
+  .close {
+    color: #1042b5 ;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    margin-right: 20px;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #f80404;
+    text-decoration: none;
+    cursor: pointer;
+  } 
+
+  button{
+    border-radius:15px;
+    background-color:#c6c2c2;
+    border: 1px solid #a1a0a0;
+  }
+  button:hover ,
+  button:focus{
+    cursor: pointer;
+    background-color:rgb(9, 46, 113);
+  }
+.categories{
+    width: 100%;
+    height: 30px;
+
+}
+.categoryImg{
+  width: 50px;
+  border-radius:15px;
+  height: 50px;
+  float: left;
+}
+
+.buttonGalleryImg {
+  width: calc(33.33% - 20px); 
+  border-radius:15px;
+  margin-bottom: 10px;
+  margin-left: 10px; 
+}
+.galleryImg {
+  border-radius:15px;
+}
+#gallery{
+  width: 98%;
+  height: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* מרווח בין התמונות */
+  overflow:scroll;
+  margin-top: 28px;
+}
+#gallery ::-webkit-scrollbar {
+  display: none;
+}

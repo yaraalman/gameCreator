@@ -3,108 +3,106 @@ const express = require("express");
 const cors = require ('cors');
 const PORT = process.env.PORT || 3001;
 const app = express(); 
-const menus = require('./myJson/menus');
-const buttons = require('./myJson/buttons');
-const forms = require('./myJson/forms');
-const inputs = require('./myJson/inputs');
-const media = require('./myJson/media');
-const pages = require('./myJson/pages');
+
+const bodyParser = require('body-parser');
+
+const {getUsers} = require('../../model/getUsers');
+const {getCodeShapes} = require('../../model/getCodeShapes');
+const {getMenuInputsByPageId} = require('../../model/getMenuInputsByPageId');
+const {getFormInputsByPageId} = require('../../model/getFormInputsByPageId');
+const {getMediaByCategoryId} = require('../../model/getMediaByCategoryId');
+const {getMediaByGameId} = require('../../model/getMediaByGameId');
+const {getMediaByPageId} = require('../../model/getMediaByPageId');
+const {getPageByName} = require('../../model/getPageByName');
+const {getGalleryCategoreies} = require('../../model/getGalleryCategoreies');
 
 
 app.use(cors());
 app.use(express.json());
 
+//app.use(bodyParser.json());
+
+app.get('/test', async (req, res) => {
+  try { 
+        
+        let test = await getCodeShapes();
+         
+      res.json(test);
+  } catch (error) {
+      console.error('Error fetching users:', error);
+      res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
 app.get("/", (req, res) => {
     res.json({ message: "Hello from server!" });
 });
 
-app.get("/menus/:pageName", (req, res) => {
+app.get("/menus/:pageName", async (req, res) => {
   const pageName=req.params.pageName;
-  let page =pages.find(page =>(page.pageName ===pageName));
-  const menu = menus.find(myMenu => myMenu.menuId === page.menuId);
-  let menubuttons =[];
-  for (const button of buttons){
-    if(menu.buttons.includes(button.buttonId)){
-      menubuttons.push(button);
-    }
-  }
-  switch (pageName) {
-      case "homePage":
-              const homeImg = media.find(myMedia => myMedia.mediaName === "homeBackground"); 
-              res.json({menubuttons,homeImg} );
-           break;
+  try{
+        let page = await getPageByName(pageName);
+        let menubuttons = await getMenuInputsByPageId(page.pageId,'link');
+        const Imgs = await getMediaByPageId(page.pageId);
+        res.json({menubuttons, Imgs});   
+  }catch (error){
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }  
+}
+);
 
-      case "header":
-              let logoImg = media.find(myMedia =>(myMedia.mediaName ==="logo"));  
-              let cloudImg = media.find(myMedia =>(myMedia.mediaName ==="cloud")); 
-              let turtleImg = media.find(myMedia =>(myMedia.mediaName ==="turtle"));  
-              let profilIcon = media.find(myMedia =>(myMedia.mediaName ==="profilIcon"));
-              
-              res.json({menubuttons,logoImg ,cloudImg ,turtleImg ,profilIcon});
-            break;
-
-      case  "creator":
-              res.json({menubuttons});
-            break;
-
-    }
-
-});
-
-app.get("/text/:pageName", (req, res) => {
-  const pageName=req.params.pageName;
-  let page =pages.find(page =>(page.pageName ===pageName));
-    switch (pageName) {
-
-      case "footer":
-              res.json({pages});
-              break;
-      case "aboutUsPage":
-              
-              let aboutUsImg = media.find(img =>(img.mediaName ==="aboutUsImg" ));
-              res.json({page ,aboutUsImg });
-              break; 
-    }
+app.get("/text/:pageName", async(req, res) => {
+  const pageName = req.params.pageName;
+  try { 
+    let page = await getPageByName(pageName);
+    let Imgs = await getMediaByPageId(page.pageId);
+    res.json({page ,Imgs});
+  }catch (error){
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }  
+            
   });
 
 
-  app.get("/form/:pageName", (req, res) => {
+  app.get("/form/:pageName", async (req, res) => {
     const pageName=req.params.pageName;
-    let page = pages.find(page =>(page.pageName === pageName));
-    let form = forms.find(item =>(item.formId === page.formId));
-    let formImg = null; 
-    let formInputs =[];
-    let formButtons =[];
-
-    switch (pageName) {
-      case "loginPage":  
-        formImg = media.find(img =>(img.mediaName ==="loginImg"));
-        break;
-
-      case "singUpPage":
-        formImg = media.find(img =>(img.mediaName ==="signUpImg" ));
-        break;
-
-      case "contactUsPage":
-        formImg = media.find(img =>(img.mediaName ==="contactUsImg" ));
-        break;
-        
-    }
-    if (page && form){
-        for (const item of inputs){
-          if(form.inputs.includes(item.inputId)){
-            formInputs.push(item);
-          }
-        }
-        for (const button of buttons){
-          if(form.buttons.includes(button.buttonId)){
-            formButtons.push(button);
-          }
-        }
-  }
-    res.json({page, formImg, formInputs, formButtons} );
-   
+    try { 
+      let page = await getPageByName(pageName);
+      let Imgs = await getMediaByPageId(page.pageId);
+      let formInputs = await  getFormInputsByPageId(page.pageId,'input');
+      let linkButtons = await getFormInputsByPageId(page.pageId, 'link');
+      let submitButtons = await getFormInputsByPageId(page.pageId, 'submit'); 
+      let formButtons = linkButtons.concat(submitButtons);
+  
+      res.json({page, Imgs , formInputs, formButtons} );
+    }catch (error){
+      console.error('Error fetching users:', error);
+      res.status(500).json({ error: 'Failed to fetch users' });
+    }  
   });
+
+  app.get("/creator/:pageName", async (req, res) => {
+    const pageName=req.params.pageName;
+    try{
+          let page = await getPageByName(pageName);
+          let menubuttons = await getMenuInputsByPageId(page.pageId,'modalButton');
+          let categories = await getGalleryCategoreies();
+          let allMedia = [];
+          let codeShapes = await getCodeShapes();
+          for(category of categories){
+            allMedia = allMedia.concat(await getMediaByCategoryId(category.categoryId));
+          }
+          res.json({menubuttons,categories,allMedia,codeShapes});   
+    }catch (error){
+      console.error('Error fetching users:', error);
+      res.status(500).json({ error: 'Failed to fetch users' });
+    }  
+         
+    
+  }
+  );
 
   
   

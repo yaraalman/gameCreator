@@ -9,7 +9,7 @@ export default class HomePage extends Component {
         super(props);
         this.state = {
             homeMenu: null,
-            homeImg:null,
+            homeImg:null
         };
     }
 
@@ -20,7 +20,8 @@ export default class HomePage extends Component {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                this.setState({ homeMenu:data.menubuttons , homeImg:data.homeImg});
+                this.setState({ homeMenu:data.menubuttons , homeImg:data.Imgs[0]});
+                
             })
             .catch(error => {
                 console.error('Error fetching page data:', error);
@@ -30,30 +31,29 @@ export default class HomePage extends Component {
     render() {
         const homeMenu  = this.state.homeMenu;
         const homeImg  = this.state.homeImg;
-
         let homeButtons = []; 
-       if (homeMenu){
+        if (homeMenu){
             for (const button of homeMenu) {
                     homeButtons.push(
                         <div className='Buttons' >
                             <a href={button.url} >
-                                <img className="icon" src={button.iconImg} alt="buttonIcon"/>
-                                <h5 className="button-text" id= {button.buttonName}> {button.text} </h5>
+                                <img className="icon" src={button.iconUrl} alt="buttonIcon"/>
+                                <h5 className="button-text" id= {button.inputName}> {button.text} </h5>
                             </a >
                         </div>
                     );
             }
         }
-        //
         if (homeImg){
-                return (
-                    <div className="homePage">  
+            console.log(homeImg);
+            return (
+                <div className="homePage">  
                     <img className={homeImg.mediaName} src={homeImg.url} alt={homeImg.mediaName}/>   
-                        <div className="list">
-                            {homeButtons}
-                        </div>
-                    </div>  
-                );
+                    <div className="list">
+                        {homeButtons}
+                    </div>
+                </div>  
+            );
             
         
         }

@@ -20,7 +20,7 @@ componentDidMount() {
     fetch(`http://localhost:3001/text/${pageName}`)
         .then(response => response.json())
         .then(data => {
-            this.setState({aboutUsPage:data.page , aboutUsImg:data.aboutUsImg});
+            this.setState({aboutUsPage:data.page , aboutUsImg:data.Imgs[0]});
         })
         .catch(error => {
             console.error('Error fetching page data:', error);
@@ -30,22 +30,24 @@ componentDidMount() {
   render(){
         const aboutUsPage=this.state.aboutUsPage;
         const aboutUsImg =this.state.aboutUsImg;
-      
+        
         let text =[];
 
         if (aboutUsPage && aboutUsPage.content){
-
-          for (let i=0; i< aboutUsPage.content.length; i++){
+          
+          const aboutUsContent = JSON.parse(aboutUsPage.content);
+          console.log(aboutUsContent)
+          for (let i=0; i< aboutUsContent.length; i++){
             if (i===2){
               text.push(
                 <h3 >  
-                    {aboutUsPage.content[i]}
+                  {aboutUsContent[i]}
                 </h3>
               );
             }else{
                 text.push(
                 <p >  
-                  {aboutUsPage.content[i]}
+                  {aboutUsContent[i]}
                 </p>
             );
             };
@@ -53,7 +55,6 @@ componentDidMount() {
         }
         if (aboutUsImg){
           return (
-            
             <div id='aboutUsPage' >
               <Header />
               <img className={aboutUsImg.mediaName} src={aboutUsImg.url} alt={aboutUsImg.mediaName}/>

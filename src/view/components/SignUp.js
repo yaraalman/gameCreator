@@ -25,7 +25,7 @@ export default class SignUp extends Component {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                this.setState({signUpPage:data.page , signUpImg:data.formImg , formInputs:data.formInputs, formButtons:data.formButtons});
+                this.setState({signUpPage:data.page , signUpImg:data.Imgs[0] , formInputs:data.formInputs, formButtons:data.formButtons});
             })
             .catch(error => {
                 console.error('Error fetching page data:', error);
@@ -44,10 +44,11 @@ export default class SignUp extends Component {
         if(formInputs && formButtons){
                 
                 for (const item of formInputs){
-                        if(item.inputId===2){
+                    /// last name input without an icon
+                        if(item.inputId === 12){
                             thisPageform.push(
                                 <div id={item.inputName}>
-                                    <input className='inputFild' type={item.type} id={item.inputId} placeholder={item.content}/>
+                                    <input className='inputFild' type={item.type} id={item.inputId} placeholder={item.text}/>
                                 </div>    
                                 );
                         }
@@ -55,7 +56,7 @@ export default class SignUp extends Component {
                             thisPageform.push(
                                 <div id={item.inputName}>
                                     <img className="formIcon" src={item.iconUrl} alt="inputIcon"/>
-                                    <input className='inputFild' type={item.type} id={item.inputId} placeholder={item.content}/>
+                                    <input className='inputFild' type={item.type} id={item.inputId} placeholder={item.text}/>
                                 </div>    
                                 );
                             }
@@ -63,15 +64,15 @@ export default class SignUp extends Component {
                 }
                 
             for (const button of formButtons){
-                        if (button.buttonId === -1){
-                            thisPageform.push(<input className="Buttons" id={button.buttonName} type="submit" value="Sign Up"/>);
+                        if (button.inputId === -1){
+                            thisPageform.push(<input className="Buttons" id={button.inputName} type="submit" value="Sign Up"/>);
                         }
                         else{
                             thisPageform.push(
-                                <div  className="Buttons" id={button.buttonName}>  
+                                <div  className="Buttons" id={button.inputName}>  
                                     <a href={button.url} > 
-                                        <img className="icon" src={button.iconImg} alt="buttonIcon"></img>
-                                        <h5 className="button-text" id= {button.buttonName}>{button.text}</h5>
+                                        <img className="icon" src={button.iconUrl} alt="buttonIcon"></img>
+                                        <h5 className="button-text" id= {button.inputName}>{button.text}</h5>
                                     </a >
                                 </div>
                                 )

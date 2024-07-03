@@ -21,7 +21,7 @@ export default class Header extends Component {
         fetch(`http://localhost:3001/menus/${pageName}`)
             .then(response => response.json())
             .then(data => {
-                this.setState({headerMenu:data.menubuttons, logoImg:data.logoImg , cloudImg:data.cloudImg , turtleImg:data.turtleImg , profilIcon:data.profilIcon});
+                this.setState({headerMenu:data.menubuttons, logoImg:data.Imgs[0] , cloudImg:data.Imgs[1] , turtleImg:data.Imgs[2] , profilIcon:data.Imgs[3]});
             })
             .catch(error => {
                 console.error('Error fetching page data:', error);
@@ -41,9 +41,9 @@ export default class Header extends Component {
         if (headerMenu) {
             for (const button of headerMenu){
                         headrButons.push(
-                                            <li className={button.buttonName}>  
+                                            <li className={button.inputName}>  
                                                 <a className="headerLink" href={button.url} > 
-                                                    <img className="icon" src={button.iconImg} alt="buttonIcon"></img>
+                                                    <img className="icon" src={button.iconUrl} alt="buttonIcon"></img>
                                                     <span>{button.text}</span>
                                                 </a >
                                             </li>
@@ -55,7 +55,9 @@ export default class Header extends Component {
         if (logoImg && cloudImg && turtleImg && profilIcon){
             return(
                     <div id="header" > 
-                        <img className={logoImg.mediaName} src={logoImg.url} alt={logoImg.mediaName}/>
+                        <a className="headerLink" href="/home" > 
+                            <img className={logoImg.mediaName} src={logoImg.url} alt={logoImg.mediaName}/>
+                        </a>
                         <ul>
                                 {headrButons}
                         </ul>

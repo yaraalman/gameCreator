@@ -17,10 +17,13 @@
     border: black 2px;
     border-radius:15px; 
     margin: 5px;
+   
     overflow:scroll;
     width: 30%;
+    justify-content: center;
    
 }
+
 .user-no-Code{
     background:green;
     border: black 2px;
@@ -29,8 +32,8 @@
     overflow:scroll;
     width: 30%;
     
+    
 }
-
 .user-no-Code ::-webkit-scrollbar {
     display: none;
 }
@@ -43,11 +46,13 @@
     border-radius:15px; 
     margin: 5px;
     width: 40%;
-  
-
 }
+
 #gameScreen{
     background:rgb(54, 9, 167);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     height: 200px;
     border-radius:15px; 
     margin: 5px;
@@ -69,20 +74,53 @@
     border-radius:15px; 
     margin: 5px;
     width:85%;
+    overflow:scroll;
+    display: flex;
+    flex-wrap: wrap;
 }
-#menus{
+#gameCharacters  ::-webkit-scrollbar {
+    display: none;
+}
+
+.characters img{
+  width: 50px; 
+  height: 50px;
+  border-radius:15px;
+  margin-bottom: 10px;
+}
+
+#modalButtons{
     background:rgb(250, 248, 248);
     border-radius:15px; 
     margin: 5px;
     width:15%;
 }
 
-#menus div {
+#modalButtons button {
     background:rgb(12, 187, 241);
-    margin: 10px;
+    margin-top: 10px;
     border-radius:50%; 
-    height: 20px;
-    padding: 10px;
+    width:50px;
+    height: 50px;
+    padding: 11px;
     box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.5);
 
 }
+.delete{
+    color: #1042b5 ;
+    float: right;
+    font-size: 10px;
+    font-weight: bold;
+    margin-right: 20px;
+  }
+  .delete:hover,
+  .delete:focus {
+    color: #f80404;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .userShapes{
+    width: 50px; 
+    height: 50px;
+    position: absolute;
+  }

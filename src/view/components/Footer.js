@@ -7,17 +7,18 @@ export default class Footer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pages: {},
+            page:null,
         };
     }
 
     componentDidMount() {
         const pageName="footer";
         fetch(`http://localhost:3001/text/${pageName}`)
-
             .then(response => response.json())
             .then(data => {
-                this.setState({ pages:data});
+                console.log(data);
+                this.setState({page:data.page});
+
             })
             .catch(error => {
                 console.error('Error fetching page data:', error);
@@ -25,18 +26,15 @@ export default class Footer extends Component {
     }
 
     render(){
-        const { pages } = this.state.pages;
-        let footer=null;
-        if (pages){
-         footer= pages.find(item =>(item.pageName ==="footer"));
+        const page = this.state.page;
         
-        }
-
-       if (footer){
+        if (page){
+            const pageContent= JSON.parse(page.content); 
+            console.log(pageContent);
             return (
                 <div id="footer">
-                        <h5  id="text1"> {footer.content[0]} </h5>
-                        <h5  id="text2"> {footer.content[1]} </h5>
+                        <h5 id="text1"> {pageContent[0]} </h5>
+                        <h5 id="text2"> {pageContent[1]} </h5>
                 </div>   
             );
        }
