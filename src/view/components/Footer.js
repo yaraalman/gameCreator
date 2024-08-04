@@ -16,7 +16,6 @@ export default class Footer extends Component {
         fetch(`http://localhost:3001/text/${pageName}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 this.setState({page:data.page});
 
             })
@@ -30,7 +29,6 @@ export default class Footer extends Component {
         
         if (page){
             const pageContent= JSON.parse(page.content); 
-            console.log(pageContent);
             return (
                 <div id="footer">
                         <h5 id="text1"> {pageContent[0]} </h5>

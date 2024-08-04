@@ -17,29 +17,27 @@
     border: black 2px;
     border-radius:15px; 
     margin: 5px;
-   
     overflow:scroll;
     width: 30%;
-    justify-content: center;
-   
-}
-
-.user-no-Code{
-    background:green;
-    border: black 2px;
-    border-radius:15px; 
-    margin: 5px;
-    overflow:scroll;
-    width: 30%;
-    
-    
-}
-.user-no-Code ::-webkit-scrollbar {
-    display: none;
+    justify-content: center; 
 }
 .noCodelist ::-webkit-scrollbar {
     display: none;
 }
+
+#user-no-Code{
+    background-color: rgba(0, 128, 0, 1);
+    border: black 2px;
+    border-radius:15px; 
+    margin: 5px;
+    overflow:scroll;
+    width: 30%;  
+}
+
+#user-no-Code ::-webkit-scrollbar {
+    display: none;
+}
+
 
 .game{
     background:#9a1dc0;
@@ -56,17 +54,14 @@
     height: 200px;
     border-radius:15px; 
     margin: 5px;
-   
-   
-
 }
+
 .user-controler {
     background:#a24848;
     border-radius:15px; 
     margin: 5px;
     height: 165px;
     display: flex;
-
 }
 
 #gameCharacters {
@@ -78,10 +73,14 @@
     display: flex;
     flex-wrap: wrap;
 }
+
 #gameCharacters  ::-webkit-scrollbar {
     display: none;
 }
+.characters{
+    margin: 10px;
 
+}
 .characters img{
   width: 50px; 
   height: 50px;
@@ -89,14 +88,14 @@
   margin-bottom: 10px;
 }
 
-#modalButtons{
+#galleryButtons{
     background:rgb(250, 248, 248);
     border-radius:15px; 
     margin: 5px;
     width:15%;
 }
 
-#modalButtons button {
+#galleryButtons button {
     background:rgb(12, 187, 241);
     margin-top: 10px;
     border-radius:50%; 
@@ -104,23 +103,42 @@
     height: 50px;
     padding: 11px;
     box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.5);
-
 }
-.delete{
-    color: #1042b5 ;
-    float: right;
+
+.delete {
+    color: #1042b5;
+    float: left;
     font-size: 10px;
     font-weight: bold;
-    margin-right: 20px;
+    cursor: pointer;
   }
+  
   .delete:hover,
   .delete:focus {
     color: #f80404;
     text-decoration: none;
-    cursor: pointer;
   }
-  .userShapes{
+
+.userShapes{
     width: 50px; 
-    height: 50px;
     position: absolute;
-  }
+}
+
+.displayedCharacter{
+    width: 100px; 
+    height: 100px;
+    opacity: 0.6;
+    margin-left: -215px;
+}
+
+
+.resizer {
+    width: 5px;
+    height: 5px;
+    background-color: #1042b5;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    cursor: nwse-resize;
+}
+
