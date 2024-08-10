@@ -87,3 +87,30 @@
 #gallery ::-webkit-scrollbar {
   display: none;
 }
+
+.variableInput {
+  display: flex;
+  flex-direction: column;
+}
+#variableName{
+  margin-top: 30px;
+  margin-left: 210px;
+}
+#initialValue{
+  margin-top: 30px;
+  margin-left: 210px;
+}
+
+#addButton{
+  height: 42px;
+  width: 150px;
+  border-radius:15px; 
+  background-color:#eff800;
+  font-family:'Luckiest Guy';
+  letter-spacing: 1px;
+  color: #1042b5 ;
+  font-size: 18px;
+  border: 2px solid #8f927e;
+  margin-top: 30px;
+  margin-left: 350px;
+}

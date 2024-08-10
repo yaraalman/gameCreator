@@ -15,6 +15,7 @@ const {getMediaByGameId} = require('../../model/getMediaByGameId');
 const {getMediaByPageId} = require('../../model/getMediaByPageId');
 const {getPageByName} = require('../../model/getPageByName');
 const {getGalleryCategoreies} = require('../../model/getGalleryCategoreies');
+const {getConditions} = require('../../model/getConditions');
 
 
 app.use(cors());
@@ -87,26 +88,32 @@ app.get("/text/:pageName", async(req, res) => {
     const pageName=req.params.pageName;
     try{
           let page = await getPageByName(pageName);
-          let menubuttons = await getMenuInputsByPageId(page.pageId,'modalButton');
+          let menubuttons = await getMenuInputsByPageId(page.pageId,'button');
           let categories = await getGalleryCategoreies();
           let allMedia = [];
           let codeShapes = await getCodeShapes();
+          let conditions = await getConditions();
           for(category of categories){
             allMedia = allMedia.concat(await getMediaByCategoryId(category.categoryId));
           }
-          res.json({menubuttons,categories,allMedia,codeShapes});   
+          res.json({menubuttons,categories,allMedia,codeShapes,conditions});   
     }catch (error){
       console.error('Error fetching users:', error);
       res.status(500).json({ error: 'Failed to fetch users' });
     }  
-         
-    
   }
   );
 
-  
+  app.post('/saveGame', (req, res) => {
+    const gameCharacters = req.body.gameCharacters;
+    
+    // db.collection('gameCharacters').insertOne(gameCharacters);
+
+    res.status(200).send({ message: 'Game characters saved successfully!' });
+});
   
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
+

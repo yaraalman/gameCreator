@@ -19,7 +19,6 @@ export const handleMediaDragStart = (e, media ,index , sourceDiv ) => {
     const divRect = document.getElementById(sourceDiv).getBoundingClientRect();
     const maxXPos = divRect.width;
     const maxYPos = divRect.height;
-    console.log("lala",maxXPos , maxYPos);
     let newPosition = {};  
 
     //Character at boundaries
@@ -55,10 +54,10 @@ export const handleMediaDragStart = (e, media ,index , sourceDiv ) => {
 
     } 
     setStateFunction(prevState => {
-    const updatedgameCharacters = [...prevState.gameCharacters];
-    updatedgameCharacters[index].mediaPos = newPosition;
-    return { gameCharacters: updatedgameCharacters };
-    });
+      const updatedgameCharacters = [...prevState.gameCharacters];
+      updatedgameCharacters[index].mediaPos = newPosition;
+      return { gameCharacters: updatedgameCharacters };
+      });
     };
 
  

@@ -19,6 +19,10 @@ p{
   font-family:'Gill Sans MT';
   font-size: 20px;
 }
+span{
+    font-family:'Gill Sans MT';
+    font-size: 10px;
+}
 img{
   width:250px;
   height:250px;

@@ -91,18 +91,22 @@
 #galleryButtons{
     background:rgb(250, 248, 248);
     border-radius:15px; 
-    margin: 5px;
+    margin: 0px;
     width:15%;
 }
 
 #galleryButtons button {
     background:rgb(12, 187, 241);
-    margin-top: 10px;
     border-radius:50%; 
     width:50px;
-    height: 50px;
-    padding: 11px;
+    height: 35px;
+    padding:0px;
+    margin: 3px;
     box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.5);
+}
+#galleryButtons button .icon{
+    margin-left: 10px;
+    margin-top: 3px;
 }
 
 .delete {
@@ -142,3 +146,48 @@
     cursor: nwse-resize;
 }
 
+
+
+.grid-container {
+    display: grid;
+    background-color: #ccccccc4;
+    display: flex;
+    padding: 2px;
+    border-radius:15%; 
+    align-items: center;
+    justify-content: center;   
+}
+
+.grid-item {
+    background-color: #795151b4;
+    border: 1px solid #795151fb;
+    border-radius:20%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px; 
+    height: 50px
+}
+
+.variable-display{
+    position: absolute ;
+    align-items: center;
+    border-radius:20%; 
+    justify-content: center;
+    width: 30px; 
+    height: 15px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 1px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: black; 
+    font-family:'Gill Sans MT';
+    font-size: 10px;
+}
+.shapeInput{
+    position: absolute !important ;
+    border-radius:20%;
+    width: 90px;
+    z-index: 1;
+    margin-left: -5PX;
+}
