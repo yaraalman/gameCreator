@@ -21,7 +21,7 @@ p{
 }
 span{
     font-family:'Gill Sans MT';
-    font-size: 10px;
+    font-size: 15px;
 }
 img{
   width:250px;
@@ -39,11 +39,12 @@ ul {
 }
 
 a{
-  color: #193471 ;
+  color: #120c7a ;
   cursor: pointer;
   text-decoration: none;
   font-family:'Gill Sans MT';
   font-size: 15px; 
+
 }
 a:hover {
   color: #2fb3e3; 
@@ -108,3 +109,26 @@ a:hover {
   margin-left: -130px;
 }
 
+.games-grid{  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-card {
+  background-color: rgba(16, 16, 94, 0.477);
+  height: 150px;
+  width: 250px;
+  padding: 10px;
+  border-radius: 5px;
+  color: rgb(245, 231, 231); 
+  margin: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.game-card:hover {
+  transform: scale(1.05);
+}

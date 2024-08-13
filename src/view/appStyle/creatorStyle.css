@@ -13,7 +13,7 @@
 }
 
 .noCodelist{
-    background:rgb(255, 3, 3);
+    background:rgb(254, 4, 4);
     border: black 2px;
     border-radius:15px; 
     margin: 5px;
@@ -146,7 +146,10 @@
     cursor: nwse-resize;
 }
 
-
+.shapes{
+    width: 300px; 
+    
+}
 
 .grid-container {
     display: grid;

@@ -12,7 +12,8 @@ export default class Header extends Component {
             logoImg:null,
             cloudImg:null,
             turtleImg:null,
-            profilIcon:null
+            profilIcon:null,
+            userDetails: JSON.parse(localStorage.getItem('userDetails')) || null
         };
     }
 
@@ -35,7 +36,8 @@ export default class Header extends Component {
         const cloudImg=this.state.cloudImg ;
         const turtleImg=this.state.turtleImg ;
         const profilIcon=this.state.profilIcon ;
-        
+       
+
         let headrButons =[];
         
         if (headerMenu) {
@@ -53,6 +55,8 @@ export default class Header extends Component {
         }
 
         if (logoImg && cloudImg && turtleImg && profilIcon){
+            const userProfileImage = this.state.userDetails && this.state.userDetails.profileImage ? this.state.userDetails.profileImage : profilIcon?.url;
+            const userName = this.state.userDetails ? `${this.state.userDetails.firstName} ${this.state.userDetails.lastName}` : "Guest";
             return(
                     <div id="header" > 
                         <a className="headerLink" href="/home" > 
@@ -63,8 +67,10 @@ export default class Header extends Component {
                         </ul>
                         <img className={cloudImg.mediaName} src={cloudImg.url} alt={cloudImg.mediaName}/>
                         <img className={turtleImg.mediaName} src={turtleImg.url} alt={turtleImg.mediaName}/>
-                        <img className={profilIcon.mediaName} src={profilIcon.url} alt={profilIcon.mediaName}/>
-                    
+                        <div className="profile">
+                            <img className={profilIcon.mediaName} src={userProfileImage} alt={profilIcon.mediaName}/>
+                            <span className="userName">{userName}</span>
+                        </div>
                     </div>
             )
         }

@@ -36,4 +36,14 @@
 }
 
 
+.errorText {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+  text-align: center; 
+}
+
+
+
 

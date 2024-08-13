@@ -10,6 +10,7 @@ import LoginPage from './view/components/Login';
 import SignUpPage from './view/components/SignUp';
 import NoPage from './view/components/NoPage';
 import CreatorPage from './view/components/Creator';
+import CreativPlay from './view/components/CreativPlay';
 
 function App() {
   /*
@@ -41,6 +42,7 @@ function App() {
           <Route path="/loginPage" element={<LoginPage />} />
           <Route path="/signUpPage" element={<SignUpPage />} />
           <Route path="/creatorPage" element={< CreatorPage/>} />
+          <Route path="/creativPlay" element={< CreativPlay/>} />
           <Route path="*" element={<NoPage />} />
         </Routes>
         <Footer />

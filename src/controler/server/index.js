@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require ('cors');
 const PORT = process.env.PORT || 3001;
 const app = express(); 
-
+const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 
 const {getUsers} = require('../../model/getUsers');
@@ -11,12 +11,20 @@ const {getCodeShapes} = require('../../model/getCodeShapes');
 const {getMenuInputsByPageId} = require('../../model/getMenuInputsByPageId');
 const {getFormInputsByPageId} = require('../../model/getFormInputsByPageId');
 const {getMediaByCategoryId} = require('../../model/getMediaByCategoryId');
-const {getMediaByGameId} = require('../../model/getMediaByGameId');
+const {getMediaById} = require('../../model/getMediaById');
 const {getMediaByPageId} = require('../../model/getMediaByPageId');
 const {getPageByName} = require('../../model/getPageByName');
 const {getGalleryCategoreies} = require('../../model/getGalleryCategoreies');
 const {getConditions} = require('../../model/getConditions');
-
+const {getUserByEmail}= require ('../../model/getUserByEmail');
+const {getElementsByGameId}= require ('../../model/getElementsByGameId');
+const {insertUser}= require('../../model/insertUser');
+const {insertGame}=require('../../model/insertGame');
+const {insertElementInGame}=require('../../model/insertElementInGame');
+const {deleteElementsByGameId}=require('../../model/deleteElementsByGameId');
+const {getGameByNameAndUserId}=require('../../model/getGameByNameAndUserId');
+const {getGamesByUserId}=require('../../model/getGamesByUserId');
+const {getGameById}=require('../../model/getGameById');
 
 app.use(cors());
 app.use(express.json());
@@ -26,12 +34,12 @@ app.use(express.json());
 app.get('/test', async (req, res) => {
   try { 
         
-        let test = await getCodeShapes();
+     let games = await getGamesByUserId(1);
          
-      res.json(test);
+      res.json(games);
   } catch (error) {
-      console.error('Error fetching users:', error);
-      res.status(500).json({ error: 'Failed to fetch users' });
+      console.error('Error fetching data:', error);
+      res.status(500).json({ error: 'Failed to fetch data' });
   }
 });
 
@@ -47,8 +55,8 @@ app.get("/menus/:pageName", async (req, res) => {
         const Imgs = await getMediaByPageId(page.pageId);
         res.json({menubuttons, Imgs});   
   }catch (error){
-    console.error('Error fetching users:', error);
-    res.status(500).json({ error: 'Failed to fetch users' });
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'Failed to fetch data' });
   }  
 }
 );
@@ -60,8 +68,8 @@ app.get("/text/:pageName", async(req, res) => {
     let Imgs = await getMediaByPageId(page.pageId);
     res.json({page ,Imgs});
   }catch (error){
-    console.error('Error fetching users:', error);
-    res.status(500).json({ error: 'Failed to fetch users' });
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'Failed to fetch data' });
   }  
             
   });
@@ -79,11 +87,22 @@ app.get("/text/:pageName", async(req, res) => {
   
       res.json({page, Imgs , formInputs, formButtons} );
     }catch (error){
-      console.error('Error fetching users:', error);
-      res.status(500).json({ error: 'Failed to fetch users' });
+      console.error('Error fetching data:', error);
+      res.status(500).json({ error: 'Failed to fetch data' });
     }  
   });
 
+  app.get("/creativPlay/:userId", async (req, res) => {
+    const userId=req.params.userId;
+    try{
+          let games = await getGamesByUserId(userId);
+          res.json({games});   
+    }catch (error){
+      console.error('Error fetching games:', error);
+      res.status(500).json({ error: 'Failed to fetch games' });
+    }  
+  }
+  );
   app.get("/creator/:pageName", async (req, res) => {
     const pageName=req.params.pageName;
     try{
@@ -98,22 +117,186 @@ app.get("/text/:pageName", async(req, res) => {
           }
           res.json({menubuttons,categories,allMedia,codeShapes,conditions});   
     }catch (error){
-      console.error('Error fetching users:', error);
-      res.status(500).json({ error: 'Failed to fetch users' });
+      console.error('Error fetching data:', error);
+      res.status(500).json({ error: 'Failed to fetch data' });
     }  
   }
   );
 
-  app.post('/saveGame', (req, res) => {
-    const gameCharacters = req.body.gameCharacters;
-    
-    // db.collection('gameCharacters').insertOne(gameCharacters);
 
-    res.status(200).send({ message: 'Game characters saved successfully!' });
+  app.post('/SignUp', async (req, res) => {
+    const { FirstName, LastName, Email, Password } = req.body;
+    
+    // בדיקה אם כל השדות הנדרשים נשלחו
+    if (!FirstName || !LastName || !Email || !Password) {
+        return res.status(400).json({ success: false, message: 'All fields are required.' });
+    }
+
+    try {
+        const existingUser = await getUserByEmail(Email);
+        if (existingUser.length > 0) {
+            return res.status(400).json({ success: false, message: 'Email already exists.' });
+        }
+        
+        // הוסף את המשתמש החדש
+        await insertUser(FirstName, LastName, Email, Password);
+        res.status(201).json({ success: true, message: 'User registered successfully.' });
+
+    } catch (error) {
+        console.error('Error during sign up:', error);
+        res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
 });
+
+
+  app.post('/login', async (req, res) => {
+        const { Email, Password } = req.body;
+        
+        if (!Email || !Password) {
+            return res.status(400).json({ 
+              success: false, message: 'Email and password are required.' });
+        }
+        
+        try {
+              const result = await getUserByEmail(Email);
+              const user = result[0];
+              console.log(result , user);
+              if (result.length === 0) {   
+                  return res.status(401).json({ 
+                    success: false, message: 'Invalid email or password.' });
+              }
+
+              const match = await bcrypt.compare(Password, user.password);
+              if (!match) {
+                  return res.status(401).json({ 
+                    success: false, message: 'Invalid email or password.' });
+              }
+              res.json({
+                  success: true,
+                  message: 'Login successful.',
+                  user: {
+                      userId: user.userId,
+                      firstName: user.firstName,
+                      lastName: user.lastName,
+                      email: user.email,
+                  },
+                
+              });
+          
+        } catch (error) {
+            console.error('Server error:', error);
+            res.status(500).json({
+              success: false, message: 'An error occurred. Please try again later.' });
+        }
+  });
+
+
+  app.post('/saveGame', async (req, res) => {
+    const { initialGameCharacters, gameName,userDetails} = req.body;
+    
+    if (!initialGameCharacters || !gameName || !userDetails) {
+      return res.status(400).json({
+        error: 'Missing initialGameCharacters, gameName, or userDetails' });
+    }
+    const userId = userDetails.userId;
+    try {
+        const existingGame = await getGameByNameAndUserId(gameName, userId);
+
+        if (existingGame) {
+            // Delete existing elements before updating
+            await deleteElementsByGameId(existingGame.gameId); 
+            // Insert new elements     
+            await Promise.all(initialGameCharacters.map(async (character) => {
+              const {mediaData, mediaPos, draggable, display ,shapes } = character;
+              console.log(mediaData, mediaPos, draggable, display ,shapes );
+              const mediaId = mediaData.mediaId;
+              if (mediaId === -1) {
+                await insertElementInGame(existingGame.gameId, mediaId, JSON.stringify(mediaPos) , draggable, display, JSON.stringify(shapes), JSON.stringify(mediaData));
+              } else {
+                await insertElementInGame(existingGame.gameId, mediaId, JSON.stringify(mediaPos), draggable, display, JSON.stringify(shapes),"");
+              }
+          }));
+        } else {
+            // Create a new game
+            const newGame = await insertGame( userId,gameName);
+          
+            // Insert new elements
+            await Promise.all(initialGameCharacters.map(async (character) => {
+              const {mediaData, mediaPos, draggable, display ,shapes } = character;
+              const mediaId = mediaData.mediaId;
+              console.log(mediaId);
+              if (mediaId === -1) {
+                await insertElementInGame(newGame.gameId, mediaId, JSON.stringify(mediaPos), draggable, display, JSON.stringify(shapes), JSON.stringify(mediaData));
+              } else {
+                await insertElementInGame(newGame.gameId, mediaId, JSON.stringify(mediaPos), draggable, display, JSON.stringify(shapes),"");
+              }
+            }));
+        }
+
+        res.status(200).json({ 
+              message: 'Game saved successfully' });
+    } catch (error) {
+      console.error('Error saving game:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+
+  app.get('/getGame/:gameId', async (req, res) => {
+    const { gameId } = req.params;
   
+    try {
+      // Fetch game details
+      const gameDetails = await getGameById(gameId);
+      if (!gameDetails) {
+        return res.status(404).json({ error: 'Game not found' });
+      }
+  
+      // Extract game name
+      const gameName = gameDetails.gameName;
+  
+      // Fetch characters for the game
+      const elements = await getElementsByGameId(gameId);
+  
+      // Reconstruct initialGameCharacters array
+      const initialGameCharacters = await Promise.all(elements.map(async element => {
+        let mediaData;
+        if (element.mediaId === -1) {
+          // Use extraContent if mediaId is -1
+          mediaData = JSON.parse(element.extraContent);
+        } else {
+          // Fetch mediaData using mediaId
+          const media = await getMediaById(element.mediaId);
+          mediaData = media; 
+        }
+        // Check if mediaPos or shapes are null or undefined before parsing
+        const mediaPos = element.mediaPos ? JSON.parse(element.mediaPos) : {};
+        const shapes = element.codeShapes ? JSON.parse(element.codeShapes) : [];
+  
+        return {
+          mediaData,
+          mediaPos,
+          draggable: element.draggable,
+          display: element.display,
+          shapes
+        };
+      }));
+  
+      // Send the response
+      res.json({
+        gameName,
+        initialGameCharacters
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
+
 

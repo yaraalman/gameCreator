@@ -20,13 +20,17 @@ export default class Creator extends Component {
           // page variables
           showModal:0,
           categoryToShow:null,
+          gameName:"",
           initialGameCharacters:[],
           gameCharacters:[], 
           shapes:[],
           indexCharacter: null,// displayed character user code
-          isPlaying: false // start a game 
+          isPlaying: false ,// start a game 
+          conditionInput :false ///if some condition needs an input
         };
     } 
+
+    
     /// start or pause a game
     PlayPauseButton = () => {
         this.setState(prevState => {
@@ -46,8 +50,9 @@ export default class Creator extends Component {
     };
     ///
     showGallery = (CategoryName) => {
-        if (this.state.isPlaying) { // Check if the game is in Play mode and switch to Pause mode
-            this.setState({ isPlaying: false });
+        if (this.state.isPlaying) {
+            // Call PlayPauseButton to switch to Pause mode 
+            this.PlayPauseButton();
         }
        if (this.state.categories){
             if(CategoryName === 'gameBackgrounds'){
@@ -60,25 +65,50 @@ export default class Creator extends Component {
 
             this.setState({ showModal : 1 });
         }   
-    }; 
+    };
+
+    handleInputGameNameChange = (e) => {   
+        const { value } = e.target;
+        this.setState(prevState => ({
+          ...prevState,
+          gameName: value
+        }));
+      };
+
+    handleSaveGame = () => {
+        if (this.state.isPlaying) {
+            // Call PlayPauseButton to switch to Pause mode 
+            this.PlayPauseButton();
+        }
+        this.setState({ 
+                initialGameCharacters:[...this.state.gameCharacters] 
+            });
+
+        saveGame(this.state.initialGameCharacters, this.state.gameName); // מעביר את השם לפונקציית השמירה
+        this.setState({ showModal: 0}); // סגירת ה-modal ואיפוס השם
+    }
 
     closeModal = () => {
         this.setState({ showModal: 0 });
     };
     
     updateGameCharactersAndBackground = (media) => {
+        if (this.state.isPlaying) {
+            // Call PlayPauseButton to switch to Pause mode 
+            this.PlayPauseButton();
+        }
         if (media.categoryId === 2){
                 const backgroundIndex = this.state.gameCharacters.findIndex( med => med.mediaData.categoryId === 2); //Returns the index of the element that has the last background; if there is no background, it returns -1.
                 const gameScreenDiv = document.getElementById('gameScreen');
                     gameScreenDiv.style.backgroundImage = `url(${media.url})`;
                 if (backgroundIndex === -1){ // No backgrounds in the array
-                    this.setState({ gameCharacters: this.state.gameCharacters.concat({mediaData:media , mediaPos :{x:700 , y:100} , shapes:[]})});
+                    this.setState({ gameCharacters: this.state.gameCharacters.concat({mediaData:media , mediaPos :{x:700 , y:100} ,draggable: 'false' ,display:'block',shapes:[]})});
                 }else{//There are backgrounds in the array
                     this.setState(prevState => {
                         // עותק עבור המערך gameCharacters
                         const updatedCharacters = [...prevState.gameCharacters];
-                        updatedCharacters[backgroundIndex]= {mediaData:media , mediaPos :{x:700 , y:100} , shapes:[]};
-                        return { gameCharacters: updatedCharacters };
+                        updatedCharacters[backgroundIndex]= {mediaData:media , mediaPos :{x:700 , y:100},draggable: 'false' ,display:'block'  , shapes:[]};
+                        return { gameCharacters: updatedCharacters , initialGameCharacters : updatedCharacters};
                     });
                 }
          }else {// if the media is not a background insert to the gameCaracters 
@@ -132,6 +162,10 @@ export default class Creator extends Component {
 
     ///delete a shape
     deleteShape = (index) => {
+        if (this.state.isPlaying) {
+            // Call PlayPauseButton to switch to Pause mode 
+            this.PlayPauseButton();
+        }
         const updatedShapes = [...this.state.shapes];
         updatedShapes.splice(index, 1);
         this.setState({ shapes: updatedShapes });
@@ -139,6 +173,8 @@ export default class Creator extends Component {
 
     componentDidMount() {
         const pageName="creatorPage";
+        const selectedGame = localStorage.getItem('selectedGame');
+
         fetch(`http://localhost:3001/creator/${pageName}`)
             .then(response => response.json())
             .then(data => {
@@ -153,9 +189,30 @@ export default class Creator extends Component {
                     onPlay(e, this.setState.bind(this)); // העברת setState function
                 }
             };
-        
+            
+            if (selectedGame) {
+                const gameId = JSON.parse(selectedGame);
+                fetch(`http://localhost:3001/getGame/${gameId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.setState({
+                            gameCharacters: data.initialGameCharacters,
+                            initialGameCharacters: data.initialGameCharacters,
+                            gameName:data.gameName
+                            
+                        });
+                        // נקה את localStorage
+                        localStorage.removeItem('selectedGame');
+                    })
+                    .catch(error => {
+                        console.error('Error fetching game details:', error);
+                    });
+            }
+
             window.addEventListener('keydown', handleKeyDown);
             this.handleKeyDown = handleKeyDown;
+
+
     }
     
     componentWillUnmount() {
@@ -168,7 +225,7 @@ export default class Creator extends Component {
         /// Updates from the database
         const creatorMenu = this.state.creatorMenu;
         const codeShapes = this.state.codeShapes;
-       
+        
         // page variables
         let gameCharacters = this.state.gameCharacters;
         let userShapes = this.state.shapes ; 
@@ -196,7 +253,18 @@ export default class Creator extends Component {
             for (const button of creatorMenu){
                 if(button.inputName === 'saveButton'){
                     creatorButtons.push( 
-                        <button onClick={() => saveGame(this.state.gameCharacters)}>
+                        <button onClick={ () => {
+                                    if (this.state.isPlaying) {
+                                        // Call PlayPauseButton to switch to Pause mode
+                                        this.PlayPauseButton();
+                                    }
+                                    const { gameName } = this.state;
+                                    if (gameName) {
+                                        saveGame(this.state.gameCharacters, gameName);
+                                    } else {
+                                        this.setState({ showModal: 2 });
+                                    }}
+                        }>
                               <img 
                                 className="icon" 
                                 src={button.iconUrl} 
@@ -280,24 +348,45 @@ export default class Creator extends Component {
         
         /// Display of user no code shapes 
         let displayUserShapes = []; 
+
+        const handleshapeInputChange = (e, index) => {
+            const value = e.target.value;
+            
+            this.setState(prevState => {
+                // Clone the shapes array and update the specific shape's inputValue
+                const updatedShapes = [...prevState.shapes];
+                updatedShapes[index] = {
+                    ...updatedShapes[index],
+                    inputValue: value,
+                };
+
+                // Clone the gameCharacters array and update the shapes of the displayedCharacter
+                const updatedCharacters = [...prevState.gameCharacters];
+                updatedCharacters[prevState.indexCharacter].shapes = updatedShapes;
+                 
+                console.log(updatedCharacters);
+                //// If the value of e is a condition of type 'collisions' 
+                let conditionInput;
+                if (value === 'collisions'){
+                    conditionInput= true;
+                }
+                else{
+                    conditionInput= false;
+                }
+                // Update the state with the modified shapes and gameCharacters
+                return { 
+                    ...prevState, 
+                    shapes: updatedShapes,
+                    gameCharacters: updatedCharacters, 
+                    conditionInput: conditionInput
+                };
+            });
+        };
+        
         userShapes.forEach((shape, index) => {
             const codeShape = codeShapes.find(item => item.shapeId === shape.shapeId);
             const { inputType } = codeShape || {}; 
-        
-            const handleInputChange = (e) => {
-                const value = e.target.value;
-                this.setState(prevState => {
-                    const updatedShapes = [...prevState.shapes];
-                    updatedShapes[index] = {
-                        ...updatedShapes[index],
-                        inputValue: value, 
-                        
-                    };
-                    console.log(updatedShapes[index]);
-                    return { ...prevState, shapes: updatedShapes };
-                });
-            };
-        
+
             displayUserShapes.push(
                 <div
                     style={{ position: 'absolute', top: shape.position.y, left: shape.position.x }}
@@ -305,13 +394,13 @@ export default class Creator extends Component {
                     <span className='delete' onClick={() => this.deleteShape(index)}> X </span>
                     {inputType === 'condition' ? (
                         <select
-                            defaultValue="Select condition"
+                            value={shape.inputValue || ""}
                             className='shapeInput'
-                            onChange={handleInputChange}
+                            onChange={(e) => handleshapeInputChange(e, index)}
                         >
                             <option value="" disabled>Select condition</option>
                             {this.state.conditions.map(condition => (
-                                <option value={condition.conditionId}>
+                                <option key={condition.conditionId} value={condition.conditionName}>
                                     {condition.conditionName}
                                 </option>
                             ))}
@@ -321,25 +410,69 @@ export default class Creator extends Component {
                             className='shapeInput'
                             type="number"
                             placeholder="Enter number"
-                            style={{ position: 'absolute' }} // Adjust the position as needed
-                            onChange={handleInputChange}
+                            value={shape.inputValue || ""}
+                            style={{ position: 'absolute' }} 
+                            onChange={(e) => handleshapeInputChange(e, index)}
                         />
                     ) : inputType === 'variable' ? (
                         <select
-                            defaultValue="Select variable"
+                            value={shape.inputValue || ""}
                             className='shapeInput'
-                            onChange={handleInputChange}
+                            onChange={(e) => handleshapeInputChange(e, index)}
                         >
                             <option value="" disabled>Select variable</option>
                             {this.state.gameCharacters
-                                .filter(Character => Character.mediaData.categoryId === 7) // Filter characters by categoryId
+                                .filter(Character => Character.mediaData.categoryId === 7)
                                 .map(Character => (
-                                    <option value={Character.conditionId}>
+                                    <option key={Character.conditionId} value={Character.mediaData.variableName}>
                                         {Character.mediaData.variableName}
                                     </option>
                                 ))}
                         </select>
-                    ) : null}
+                    ) : null }
+                    {this.state.conditionInput ? (
+                        <select
+                            value={shape.inputValue || ""}
+                            className='shapeInput'
+                            onChange={(e)=>{
+                                const value = e.target.value;
+                                                    
+                                this.setState(prevState => {
+                                // Clone the shapes array and update the specific shape's inputValue
+                                    const updatedShapes = [...prevState.shapes];
+                                    updatedShapes[index] = {
+                                        ...updatedShapes[index],
+                                        conditionInput: value,
+                                    };
+                    
+                                    // Clone the gameCharacters array and update the shapes of the displayedCharacter
+                                    const updatedCharacters = [...prevState.gameCharacters];
+                                    updatedCharacters[prevState.indexCharacter].shapes = updatedShapes;
+                                
+                                    // Update the state with the modified shapes and gameCharacters
+                                    return { 
+                                        ...prevState, 
+                                        shapes: updatedShapes,
+                                        gameCharacters: updatedCharacters, 
+                                        ////  init the conditionInput
+                                        conditionInput: false,
+                                    };
+                                });
+                            }
+                               
+                            }   
+                        >
+                            <option value="" disabled>Select variable</option>
+                            {this.state.gameCharacters
+                                .filter(Character => Character.mediaData.categoryId !== 7)
+                                .map((Character , index) => (
+                                    <option key={Character.conditionId} value={index} >
+                                        {Character.mediaData.mediaName}
+                                    </option>
+                            ))}
+                        </select>
+                        ) : null
+                    }
                     <img 
                         className='userShapes' 
                         src={codeShapes.find(item => item.shapeId === shape.shapeId).url} 
@@ -356,8 +489,8 @@ export default class Creator extends Component {
                     ></div>
                 </div>
             );
-           
-        });
+        })
+          
         if(codeShapes){
             return(
                 <div className='creatorPage'>
@@ -429,14 +562,20 @@ export default class Creator extends Component {
                             />
                         )}
                     </div> 
-                    <div className='shapesInputModal'>
-                        {   
-                            this.state.showModal === 2 && (
-                            <inputModal
-                                closeModal={this.closeModal} 
-                                setState = {this.setState.bind(this)}
-                                
-                            />
+                    <div className="gameNameModal">
+                        {this.state.showModal === 2 && (
+                                <div className="modal">
+                                    <div className="nameModal-content">
+                                        <h2>Enter Game Name</h2>
+                                        <input
+                                            type="text"
+                                            value={this.state.gameName}
+                                            onChange={this.handleInputGameNameChange}
+                                        />
+                                        <button className="button" onClick={this.handleSaveGame}>Save Game</button>
+                                        <button className="button" onClick={this.closeModal}>Cancel</button>
+                                    </div>
+                                </div>
                         )}
                     </div>     
                 </div>
@@ -448,4 +587,5 @@ export default class Creator extends Component {
 
     
 }
+
 

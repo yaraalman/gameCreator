@@ -30,14 +30,12 @@ const galleryModal = ({ closeModal , showModal , updateGameCharactersAndBackgrou
                     }
                     // יצירת דמות חדשה עם שם המשתנה והערך ההתחלתי
                     const newVariableCharacter = {
-                        mediaData: { categoryId:7, variableName: variableName, initialValue: initialValue },
+                        mediaData: { mediaId: -1 ,categoryId:7, variableName: variableName, initialValue: initialValue },
                         mediaPos: { x: 700, y: 100 },
                         draggable: 'true',
                         display: 'block',
                         shapes: []
                     };
-                   
-                    // עדכון מערך הדמויות
                     setState(prevState => ({
                         gameCharacters: prevState.gameCharacters.concat(newVariableCharacter)
                     }));

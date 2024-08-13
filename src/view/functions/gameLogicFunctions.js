@@ -13,24 +13,18 @@ export function onPlay(e , setStateFunction) {
   setStateFunction(prevState => { 
       const gameScreen = document.getElementById('gameScreen');
       const screenRect = gameScreen.getBoundingClientRect();
-      
 
       const updatedCharacters = prevState.gameCharacters.map((character, index) => {
           const shapes = [...character.shapes];
           let position = { ...character.mediaPos };
           let draggable = 'false';
           let display = 'block';
-          
-          let dynamicVariables = {};
 
-          if (character.mediaData.categoryId === 7) {
-            dynamicVariables[character.mediaData.variableName] = character.mediaData.initialValue;
-          }
           // Call the recursive function to process the shapes
           const generatedCode = shapesToCode(prevState.codeShapes, shapes, prevState.conditions);
-          
+          console.log(generatedCode);
           eval(generatedCode); 
-//inputValue 
+
 
           return {
               ...character,
@@ -46,54 +40,63 @@ export function onPlay(e , setStateFunction) {
       };
   });
 }
-
-function shapesToCode(codeShapes, shapes ,conditions) {
+function shapesToCode(codeShapes, shapes, conditions) {
   if (!shapes || shapes.length === 0) {
     return ''; 
   }
 
   const shape = shapes[0];
   let remainingShapes = shapes.slice(1);
-
+  
   let shapeCode = `${codeShapes.find(item => item.shapeId === shape.shapeId).code}`;
+  // Replace "inputValue" with shape.inputValue and "condition" with condition text
+  if (shape.inputValue) {
+    shapeCode = shapeCode.replace( /inputValue/g, shape.inputValue);
+    const condition = conditions.find(cond => cond.conditionName === shape.inputValue);
+    if (condition) {
+      shapeCode = shapeCode.replace(/condition/g, condition.conditionTxt);
+      if(condition.needsInput){
+        shapeCode = shapeCode.replace(/conditionInput/g,shape.conditionInput );
+        
+      }
+    }
+    
+  } 
+  console.log("אחרי החלפה",shapeCode)
 
-// Replace "inputValue" with shape.inputValue
-if (shape.inputValue) {
-  shapeCode = shapeCode.replace(/inputValue/g, shape.inputValue);
-}
+  // Process nested shapes
+  let nestedShapeCode = '';
+  let i = 0;
 
-
-// Replace "condition" with the corresponding condition text from the conditions array
-if (shape.inputValue) {
-  const condition = conditions.find(cond => cond.conditionName === shape.inputValue);
-  if (condition) {
-    shapeCode = shapeCode.replace(/condition/g, condition.conditionTxt);
+  while (i < remainingShapes.length && remainingShapes[i].level > shape.level) {
+    nestedShapeCode += shapesToCode(codeShapes, [remainingShapes[i]], conditions);
+    i++;
   }
+  
+  // Add the nested shapes code to the current shape's code
+  shapeCode = shapeCode.slice(0, -1) + nestedShapeCode + shapeCode.slice(-1);
+ 
+  // Continue processing the remaining shapes that have the same or lower level
+  const nextRemainingShapes = remainingShapes.slice(i);
+
+  return shapeCode + '\n' + shapesToCode(codeShapes, nextRemainingShapes, conditions);
 }
 
-  // מצא את הצורות עם רמה גבוהה יותר שצריכות להיות בתוך הצורה הנוכחית
-  const nestedShapes = remainingShapes.filter(s => s.level > shape.level );
+export function  saveGame (initialGameCharacters , gameName )  {
+  const userDetails = JSON.parse(localStorage.getItem('userDetails')) || null;
 
-  // אם יש צורות נמלצות, הוסף אותן בצורה רקורסיבית
-  if (nestedShapes.length > 0) {
-    let nestedShapeCode = shapesToCode(codeShapes, nestedShapes);
-    // השמת קוד של הצורות הנמלצות בתוך הקוד של הצורה הנוכחית
-    shapeCode = shapeCode.slice(0, -1) + nestedShapeCode + shapeCode.slice(-1);
-    // הסר את הצורות הנמלצות מהשאר
-    remainingShapes = remainingShapes.filter(s => s.level <= shape.level);
+  // אם אין פרטי משתמש, דחה את הבקשה
+  if (!userDetails) {
+    console.error('No user is logged in');
+    return;
   }
 
-  // טיפול בצורות שנותרו והוספתן למחרוזת הסופית
-  return shapeCode + '\n' + shapesToCode(codeShapes, remainingShapes);
-}
-
-export function  saveGame (initialGameCharacters)  {
   fetch('http://localhost:3001/saveGame', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ initialGameCharacters:[]})
+      body: JSON.stringify({ initialGameCharacters ,gameName , userDetails})
   })
   .then(response => {
       if (!response.ok) {

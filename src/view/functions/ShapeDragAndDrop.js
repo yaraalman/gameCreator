@@ -51,7 +51,7 @@ export const handleShapeDrop = (e, setStateFunction, state) => {
         height: 80,
       };
 
-      const newShape = { shapeId: shape.shapeId, position, size ,inputValue:null};
+      const newShape = { shapeId: shape.shapeId, position, size ,inputValue:null , conditionInput:null};
 
       setStateFunction((prevState) => {
         let updatedShapes = [...prevState.shapes, newShape];

@@ -13,17 +13,24 @@ export default class Login extends Component {
             loginPage:null,
             loginImg :null,
             formInputs:null,
-            formButtons:null
+            formButtons:null,
+            Email:'',
+            Password:'',
+            errorMessage:'',
+
         };
     }
-    
+    /*const handleLogout = () => {
+    localStorage.removeItem('userDetails');
+    // ביצוע כיוונון מחדש לדף ההתחברות או לדף אחר
+    window.location.href = '/login';
+    }; */
     componentDidMount() {
         const pageName="loginPage";
     
         fetch(`http://localhost:3001/form/${pageName}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 this.setState({loginPage:data.page , loginImg:data.Imgs[0] , formInputs:data.formInputs, formButtons:data.formButtons});
 
             })
@@ -32,6 +39,40 @@ export default class Login extends Component {
             });
       }
     
+    
+    handleInputChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+
+        const { Email, Password } = this.state;
+        
+        fetch('http://localhost:3001/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ Email, Password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Store user details in local storage or state
+                localStorage.removeItem('userDetails');
+                localStorage.setItem('userDetails', JSON.stringify(data.user));
+                
+                window.location.href = '/creatorPage';
+            } else {
+                this.setState({ errorMessage: data.message });
+            }
+        })
+        .catch(error => {
+            console.error('Error during login:', error);
+            this.setState({ errorMessage: 'An error occurred. Please try again.' });
+        });
+    }
+
+
 
     render(){
 
@@ -39,14 +80,21 @@ export default class Login extends Component {
         const loginImg = this.state.loginImg;
         const formInputs= this.state.formInputs;
         const formButtons= this.state.formButtons;
-        console.log(loginPage);
+
         const thisPageform =[];
        if(formInputs && formButtons){
             for (const item of formInputs){
                     thisPageform.push(
                                     <div>
                                         <img className="formIcon" src={item.iconUrl} alt="inputIcon"/>
-                                        <input className='inputFild' type={item.type} id={item.inputId} placeholder={item.text}/>
+                                        <input  className='inputFild' 
+                                                name={item.inputName} 
+                                                type={item.type} 
+                                                id={item.inputId} 
+                                                placeholder={item.text}
+                                                onChange={this.handleInputChange}
+                                        />
+
                                     </div>    
                                     )
                 
@@ -73,9 +121,10 @@ export default class Login extends Component {
                     <Header />
                     <img className={loginImg.mediaName} src={loginImg.url} alt={loginImg.mediaName}/>
                     <h1 className='title'> {loginPage.title}</h1>
-                    <div id="LoginForm">
+                    <form id="LoginForm"  onSubmit={this.handleSubmit}>
                         {thisPageform}
-                    </div>    
+                        {this.state.errorMessage && <p className="error-message">{this.state.errorMessage}</p>}
+                    </form>    
                 </div>
 
                 );

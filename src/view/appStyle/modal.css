@@ -27,6 +27,19 @@
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
   }
 
+  .nameModal-content {
+    position: relative;
+    background-color: #929eeb;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    border-radius:15px;
+    width: 50%;
+    height: 30%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    
+  }
+
 
   /* The Close Button */
   .close {
@@ -114,3 +127,5 @@
   margin-top: 30px;
   margin-left: 350px;
 }
+
+
