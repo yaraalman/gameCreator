@@ -36,7 +36,7 @@ export default class CreativPlay extends Component {
                 <div>
                     <Header />
                     <div className="games-grid">
-                        {this.state.games.map(game => (
+                        {games.map(game => (
                             <div key={game.gameId} className="game-card" onClick={() => this.handleGameClick(game.gameId)}>
                                 <h1>{game.gameName}</h1>
                             </div>

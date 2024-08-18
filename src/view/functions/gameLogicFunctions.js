@@ -13,7 +13,15 @@ export function onPlay(e , setStateFunction) {
   setStateFunction(prevState => { 
       const gameScreen = document.getElementById('gameScreen');
       const screenRect = gameScreen.getBoundingClientRect();
+      const dynamicObject = {}; 
 
+       // עבור על כל הדמויות ועדכן את dynamicObject
+      prevState.gameCharacters.forEach(character => {
+        if (character.mediaData.categoryId === 7) {
+          dynamicObject[character.mediaData.variableName] = character.mediaData.initialValue;
+        }
+      });
+      console.log(dynamicObject );
       const updatedCharacters = prevState.gameCharacters.map((character, index) => {
           const shapes = [...character.shapes];
           let position = { ...character.mediaPos };
@@ -25,7 +33,18 @@ export function onPlay(e , setStateFunction) {
           console.log(generatedCode);
           eval(generatedCode); 
 
-
+          if (character.mediaData.categoryId === 7) {
+            return {
+              ...character,
+              mediaData: {
+                ...character.mediaData,
+                initialValue: dynamicObject[character.mediaData.variableName]
+              },
+              mediaPos: position,
+              draggable: draggable,
+              display: display,
+            };
+          }
           return {
               ...character,
               mediaPos: position,
@@ -62,7 +81,7 @@ function shapesToCode(codeShapes, shapes, conditions) {
     }
     
   } 
-  console.log("אחרי החלפה",shapeCode)
+  
 
   // Process nested shapes
   let nestedShapeCode = '';
