@@ -5,7 +5,7 @@ const galleryModal = ({ closeModal , showModal , updateGameCharactersAndBackgrou
    
    
     const categoriesDiv = [];
-    if(openCategory.categoryId !== 2){
+    if(openCategory.categoryId !== 2 ){// If the category is a game background, do not display the other categories.
         categoriesDiv.push(
             <div className='categories' >
                      { categories.map(category => (category.categoryId !== 2 && 
@@ -17,7 +17,7 @@ const galleryModal = ({ closeModal , showModal , updateGameCharactersAndBackgrou
         );
     }
     const variableInput =[];
-    if (openCategory.categoryId === 7) {
+    if (openCategory.categoryId === 7) { // variable input 
         variableInput.push(
             <div className='variableInput' >
                 <input className='inputFild' type='text' id='variableName' placeholder="Please enter a name for the new variable:" />
@@ -28,10 +28,12 @@ const galleryModal = ({ closeModal , showModal , updateGameCharactersAndBackgrou
                     if (!variableName || !initialValue) {
                         return;
                     }
-                    // יצירת דמות חדשה עם שם המשתנה והערך ההתחלתי
+                    const gameScreenDiv = document.getElementById('gameScreen');
+                    const gameScreenRect = gameScreenDiv.getBoundingClientRect();
+                    // "Creating a new character variable with an initial value."
                     const newVariableCharacter = {
                         mediaData: { mediaId: -1 ,categoryId:7, variableName: variableName, initialValue: initialValue },
-                        mediaPos: { x: 700, y: 100 },
+                        mediaPos: {x:10 , y:10},
                         draggable: 'true',
                         display: 'block',
                         shapes: []
@@ -52,7 +54,7 @@ const galleryModal = ({ closeModal , showModal , updateGameCharactersAndBackgrou
                 {categoriesDiv}      
                 <div id="gallery" >
                         { allMedia.map(media => (
-                            media.categoryId === openCategory.categoryId && 
+                            media.categoryId === openCategory.categoryId && openCategory.categoryId !==7 &&
                             <button className='buttonGalleryImg' onClick={() => updateGameCharactersAndBackground(media)}>
                                 <img className ='galleryImg' src={media.url} alt={media.mediaName} />
                             </button>

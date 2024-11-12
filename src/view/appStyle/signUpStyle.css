@@ -1,18 +1,18 @@
 .signUpPage h1{
-  margin-top: 10px ;
+  margin-top: 25px ;
   margin-left: 205px;
 }
 .signUpImg{
     float:right;
-    height: 400px;
+    height: 500px;
     width: 30%;
-    margin-top: -25px;
+    margin-top: -20px;
     margin-right: 100px;
 }
 
 #SignUpForm{
-  margin-top: -30px;
-  margin-left: 280px;
+  margin-left: 380px;
+  margin-top: 0px;
 }
 
 .inputFild  {
@@ -20,21 +20,25 @@
   width: 400px; 
 }
 
-#LastName input,#FirstName input{
+#lastName input,#firstName input{
   width: 180px;
 }
-#SignUpForm #FirstName {
+
+#SignUpForm #firstName {
   margin-left: -220px;
 }
-#SignUpForm #LastName{
-  margin-top: -68px;
-  margin-left: 145px;
-}
- #SignUpForm #submit{
-  margin-left: 80px;
-  margin-top: 20px;
+
+#SignUpForm #lastName{
+  margin-top: -66px;
+  margin-left: 40px;
 }
 
+ #SignUpForm #submit{
+  margin-left: 43px;
+  margin-top: 20px;
+  z-index: 1;
+  position: relative;
+}
 
 .errorText {
   color: red;

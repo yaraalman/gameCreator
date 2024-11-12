@@ -17,7 +17,7 @@ export default class CreativPlay extends Component {
     }
 
     componentDidMount() {
-        const userId = 1; // User ID שאתה רוצה למשוך משחקים אליו
+        const userId = 0; //admin user id 
         fetch(`http://localhost:3001/creativPlay/${userId}`)
             .then(response => response.json())
             .then(data => {

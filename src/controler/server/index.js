@@ -112,7 +112,7 @@ app.get("/text/:pageName", async(req, res) => {
           let allMedia = [];
           let codeShapes = await getCodeShapes();
           let conditions = await getConditions();
-          for(category of categories){
+          for(let category of categories){
             allMedia = allMedia.concat(await getMediaByCategoryId(category.categoryId));
           }
           res.json({menubuttons,categories,allMedia,codeShapes,conditions});   
@@ -125,21 +125,21 @@ app.get("/text/:pageName", async(req, res) => {
 
 
   app.post('/SignUp', async (req, res) => {
-    const { FirstName, LastName, Email, Password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
     
     // בדיקה אם כל השדות הנדרשים נשלחו
-    if (!FirstName || !LastName || !Email || !Password) {
+    if (!firstName || !lastName || !email || !password) {
         return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
 
     try {
-        const existingUser = await getUserByEmail(Email);
+        const existingUser = await getUserByEmail(email);
         if (existingUser.length > 0) {
             return res.status(400).json({ success: false, message: 'Email already exists.' });
         }
         
         // הוסף את המשתמש החדש
-        await insertUser(FirstName, LastName, Email, Password);
+        await insertUser(firstName, lastName, email, password);
         res.status(201).json({ success: true, message: 'User registered successfully.' });
 
     } catch (error) {
@@ -150,23 +150,23 @@ app.get("/text/:pageName", async(req, res) => {
 
 
   app.post('/login', async (req, res) => {
-        const { Email, Password } = req.body;
+        const { email, password } = req.body;
         
-        if (!Email || !Password) {
+        if (!email || !password) {
             return res.status(400).json({ 
               success: false, message: 'Email and password are required.' });
         }
         
         try {
-              const result = await getUserByEmail(Email);
+              const result = await getUserByEmail(email);
               const user = result[0];
               console.log(result , user);
-              if (result.length === 0) {   
+              if (!result.length === 0) {   
                   return res.status(401).json({ 
                     success: false, message: 'Invalid email or password.' });
               }
 
-              const match = await bcrypt.compare(Password, user.password);
+              const match = await bcrypt.compare(password, user.password);
               if (!match) {
                   return res.status(401).json({ 
                     success: false, message: 'Invalid email or password.' });
@@ -208,7 +208,6 @@ app.get("/text/:pageName", async(req, res) => {
             // Insert new elements     
             await Promise.all(initialGameCharacters.map(async (character) => {
               const {mediaData, mediaPos, draggable, display ,shapes } = character;
-              console.log(mediaData, mediaPos, draggable, display ,shapes );
               const mediaId = mediaData.mediaId;
               if (mediaId === -1) {
                 await insertElementInGame(existingGame.gameId, mediaId, JSON.stringify(mediaPos) , draggable, display, JSON.stringify(shapes), JSON.stringify(mediaData));
@@ -218,7 +217,7 @@ app.get("/text/:pageName", async(req, res) => {
           }));
         } else {
             // Create a new game
-            const newGame = await insertGame( userId,gameName);
+            const newGame = await insertGame(userId,gameName);
           
             // Insert new elements
             await Promise.all(initialGameCharacters.map(async (character) => {
@@ -262,7 +261,7 @@ app.get("/text/:pageName", async(req, res) => {
       const initialGameCharacters = await Promise.all(elements.map(async element => {
         let mediaData;
         if (element.mediaId === -1) {
-          // Use extraContent if mediaId is -1
+          // Use extraContent if mediaId is -1 (Variable)
           mediaData = JSON.parse(element.extraContent);
         } else {
           // Fetch mediaData using mediaId

@@ -1,44 +1,42 @@
 .loginPage h1{
-    margin-right: 100px;
-}
-.loginImg{
-    float:left;
-    height: 430px;
-    width: 30%;
-    margin-top:-50px;
-    margin-left: 150px;
-}
-/*#LoginForm{ 
-    background: rgb(242, 245, 245);
-    width: 400px;
-    height: 250px;
-    margin-top:0px;
-    margin-left: 500px;
-}*/
-#LoginForm{ 
-    margin-top:-15px;
+    margin-right: 200px;
+    margin-top: 50px;
 }
 
-.formIcon{
-    margin-left:-100px ;
-    margin-bottom: -5px;
-    width:25px;
-    height:25px;
+.loginImg{
+    float:left;
+    height: 530px;
+    width: 30%;
+    margin-top:-50px;
+    margin-left: -80px;
+}
+
+#LoginForm{ 
+    align-items: center;
+    margin-left: -55px;
+
+}
+
+.formIcon{ 
+    margin-left:-205px ;
+    margin-bottom: -10px;
+    width:30px;
+    height:30px;
 }
 
 #LoginForm .inputFild {
-    width: 300px; 
+    width: 350px; 
   }
 
  #LoginForm #submit{
-    position: absolute ; 
-    margin-left : 591px;
-    margin-top:-43px;
-    
+    height:44px;
+    width: 150px;
+    margin-left : 900px;
+    margin-top:-44px;
 }
 
  #signUp{
-    margin-left: 760px;
+    margin-left: 700px;
     margin-top: 20px;
     height: 40px;
     width: 150px;
@@ -61,4 +59,6 @@
     margin-top: 25px;
 }
 
-
+#LoginForm p{
+    margin-right: 150px;
+}

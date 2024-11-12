@@ -24,16 +24,15 @@ export default class SignUp extends Component {
 
     componentDidMount() {
         const pageName="singUpPage";
-    fetch(`http://localhost:3001/form/${pageName}`)
-
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                this.setState({signUpPage:data.page , signUpImg:data.Imgs[0] , formInputs:data.formInputs, formButtons:data.formButtons});
-            })
-            .catch(error => {
-                console.error('Error fetching page data:', error);
-            });
+        fetch(`http://localhost:3001/form/${pageName}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    this.setState({signUpPage:data.page , signUpImg:data.Imgs[0] , formInputs:data.formInputs, formButtons:data.formButtons});
+                })
+                .catch(error => {
+                    console.error('Error fetching page data:', error);
+                });
     }
 
     handleInputChange = (e) => {
@@ -49,74 +48,77 @@ export default class SignUp extends Component {
     validateForm = () => {
         let valid = true;
         const errors = {}; // Initialize errors object
-    
+        console.log('formData:', this.state.formData);
         // Check for first name and last name
-        if (!this.state.formData.FirstName || !this.state.formData.LastName) {
-            errors.LastName ='First name and last name are required';
+        if (!this.state.formData.firstName || !this.state.formData.lastName) {
+            errors.lastName ='First name and last name are required';
             valid = false;
         } else {
-            errors.LastName ='';
+            errors.lastName ='';
         }
       
         // Check for email
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!this.state.formData.Email || !emailPattern.test(this.state.formData.Email)) {
-            errors.Email = 'Invalid email address';
+        if (!this.state.formData.email || !emailPattern.test(this.state.formData.email)) {
+            errors.email = 'Invalid email address';
             valid = false;
         } else {
-            errors.Email = '';
+            errors.email = '';
         }
     
         // Check for password
-        if (!this.state.formData.Password || this.state.formData.Password.length < 6) {
-            errors.Password = 'Password must be at least 6 characters long';
+        if (!this.state.formData.password || this.state.formData.password.length < 6) {
+            errors.password = 'Password must be at least 6 characters long';
             valid = false;
         } else {
-            errors.Password = '';
+            errors.password = '';
         }
     
         // Check for password and confirm password match
-        if (this.state.formData.Password !== this.state.formData.ConfirmPassword) {
-            errors.ConfirmPassword = 'Passwords do not match';
+        if (this.state.formData.password !== this.state.formData.confirmPassword) {
+            errors.confirmPassword = 'Passwords do not match';
             valid = false;
         } else {
-            errors.ConfirmPassword = '';
+            errors.confirmPassword = '';
         }
-        this.setState(prevState => ({
-            errors:errors
-        }));
+        console.log('errors:', errors);
+        this.setState({ errors });
+       
         return valid;
     }; 
 
     
     handleSubmit = (e) => {
         e.preventDefault(); // Prevent default form submission
-    const isValid = this.validateForm();
-    
-    if (isValid) {
-        const { formData } = this.state;
-
-        fetch('http://localhost:3001/SignUp', {
-            method: 'POST',
-            headers: {
+        console.log("Submit button clicked");
+       
+         const isValid = this.validateForm();
+         console.log(isValid);
+        
+        if (isValid) {
+             const { formData } = this.state;
+            fetch('http://localhost:3001/SignUp', {
+                method: 'POST',
+                headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = '/creatorPage';
-            } else {
-                console.error('Sign-up failed:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error during sign-up:', error);
-        });
-    } else {
-        console.error('Validation failed. Please correct the errors and try again.');
-    }
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/creatorPage';
+                } else {
+                    console.error('Sign-up failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during sign-up:', error);
+            });
+        } else {
+            console.log(this.state.errors);
+            console.error('Validation failed. Please correct the errors and try again.');
+        }
     }
 
     render(){
@@ -156,7 +158,7 @@ export default class SignUp extends Component {
             }
             
             for (const button of formButtons){
-                    if (button.inputId === -1){
+                    if (button.inputId === -1){ // submit butoon
                         thisPageform.push(<input className="Buttons" id={button.inputName} type="submit" value="Sign Up"/>);
                     }
                     else{

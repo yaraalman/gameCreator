@@ -8,13 +8,12 @@
     border-radius:15px; 
     margin: 5px;
     display: flex;
-    height: 390px;
-    width: 1080px;
+    height: 490px;
+    width: 99.2%;
 }
 
 .noCodelist{
     background:rgb(254, 4, 4);
-    border: black 2px;
     border-radius:15px; 
     margin: 5px;
     overflow:scroll;
@@ -24,11 +23,14 @@
 .noCodelist ::-webkit-scrollbar {
     display: none;
 }
-
+.shapeList{
+    width: 250px;
+    height: 250px;
+}
 #user-no-Code{
     background-color: rgba(0, 128, 0, 1);
-    border: black 2px;
     border-radius:15px; 
+    
     margin: 5px;
     overflow:scroll;
     width: 30%;  
@@ -51,7 +53,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 200px;
+    height: 300px;
     border-radius:15px; 
     margin: 5px;
 }
@@ -64,7 +66,7 @@
     display: flex;
 }
 
-#gameCharacters {
+#displayCharacters {
     background:yellow;
     border-radius:15px; 
     margin: 5px;
@@ -74,13 +76,13 @@
     flex-wrap: wrap;
 }
 
-#gameCharacters  ::-webkit-scrollbar {
+#displayCharacters  ::-webkit-scrollbar {
     display: none;
 }
 .characters{
     margin: 10px;
-
 }
+
 .characters img{
   width: 50px; 
   height: 50px;
@@ -98,7 +100,7 @@
 #galleryButtons button {
     background:rgb(12, 187, 241);
     border-radius:50%; 
-    width:50px;
+    width:80%;
     height: 35px;
     padding:0px;
     margin: 3px;
@@ -147,8 +149,7 @@
 }
 
 .shapes{
-    width: 300px; 
-    
+    width: 250px; 
 }
 
 .grid-container {
@@ -168,8 +169,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px; 
-    height: 50px
+    width: 50px; 
+    height: 70px
 }
 
 .variable-display{
@@ -177,7 +178,7 @@
     align-items: center;
     border-radius:20%; 
     justify-content: center;
-    width: 30px; 
+   
     height: 15px;
     background-color: #f0f0f0;
     border: 1px solid #ccc;
@@ -192,5 +193,14 @@
     border-radius:20%;
     width: 90px;
     z-index: 1;
-    margin-left: -5PX;
+   
+    margin-top:  -10px;
+}
+
+.conditionInput{
+    position: absolute !important  ;
+    border-radius:20%;
+    width: 90px;
+    z-index: 1;
+    margin-top:  12px;
 }

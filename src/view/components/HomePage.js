@@ -45,7 +45,6 @@ export default class HomePage extends Component {
             }
         }
         if (homeImg){
-            console.log(homeImg);
             return (
                 <div className="homePage">  
                     <img className={homeImg.mediaName} src={homeImg.url} alt={homeImg.mediaName}/>   

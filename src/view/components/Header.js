@@ -22,6 +22,7 @@ export default class Header extends Component {
         fetch(`http://localhost:3001/menus/${pageName}`)
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 this.setState({headerMenu:data.menubuttons, logoImg:data.Imgs[0] , cloudImg:data.Imgs[1] , turtleImg:data.Imgs[2] , profilIcon:data.Imgs[3]});
             })
             .catch(error => {
@@ -59,7 +60,7 @@ export default class Header extends Component {
             const userName = this.state.userDetails ? `${this.state.userDetails.firstName} ${this.state.userDetails.lastName}` : "Guest";
             return(
                     <div id="header" > 
-                        <a className="headerLink" href="/home" > 
+                        <a className="homeLink" href="/home" > 
                             <img className={logoImg.mediaName} src={logoImg.url} alt={logoImg.mediaName}/>
                         </a>
                         <ul>

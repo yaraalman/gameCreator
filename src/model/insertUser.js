@@ -1,14 +1,14 @@
 const db = require('./dataConnect.js');
 const bcrypt = require('bcrypt');
 
-const insertUser = async  (FirstName, LastName, Email, Password) => {
-    const hashedPassword = await bcrypt.hash(Password, 10);
+const insertUser = async  (firstName, lastName, email, password) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const sql = `
         INSERT INTO users (firstName, lastName, email, password ,role) 
         VALUES (?, ?, ?, ? , 'user')`;
     
     return new Promise((resolve, reject) => {
-        db.query(sql, [FirstName, LastName, Email, hashedPassword], (err, results) => {
+        db.query(sql, [firstName, lastName, email, hashedPassword], (err, results) => {
             if (err) {
                 return reject(err);
             }

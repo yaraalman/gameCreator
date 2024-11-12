@@ -1,36 +1,36 @@
 .contactUsImg{
     float:right;
     height: auto;
-    width: 50%;
-    margin-top: -100px;
-    margin-right:-50px;
+    width: 60%;
+    margin-top:-150px;
+    margin-right:-100px;
 }
 #ContactUsForm{
-    margin-left: 200px ;
+    margin-left: 350px;
     margin-top: -15px;
  }
  
 #contactUsPage h1 {
-    margin-left: -85px;
+    margin-top: 50px;
+    margin-left: -165px;
 }
-#contactUsPage p{
-    margin-left: -70px;
-    margin-top: -15px;
+#contactUsPage p {
+    margin-left: -170px;
     font-size: 18px ;
 
 }
 
-
 #ContactUsForm #submit{
-    margin-left:90px;
-    margin-top: 20px ;
+    position: absolute;
+    margin-left: -30px;
+    margin-top: 20px;
 }
 
-#ContactUsForm #FirstName{
+#ContactUsForm #firstName{
     margin-top: -15px;
-    margin-left: -160px;
+    margin-left: -208px;
 }
-#ContactUsForm #LastName{
-    margin-left: 145px;
-    margin-top: -65px;
+#ContactUsForm #lastName{
+    margin-left: 40px;
+    margin-top: -66px;
 }

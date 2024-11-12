@@ -1,63 +1,49 @@
-export const handleMediaDragStart = (e, media ,index , sourceDiv ) => {
-    e.dataTransfer.setData("media", JSON.stringify(media));
-    e.dataTransfer.setData("sourceDiv", JSON.stringify(sourceDiv));
-    e.dataTransfer.setData("index", JSON.stringify(index));
+export const handleMediaDragStart = (e, media, index, sourceDiv) => {
+  // Store media, sourceDiv, and index in dataTransfer for drag events
+  e.dataTransfer.setData("media", JSON.stringify(media));
+  e.dataTransfer.setData("sourceDiv", JSON.stringify(sourceDiv));
+  e.dataTransfer.setData("index", JSON.stringify(index));
+};
+
+export const handleMediaDragEnd = (e, setStateFunction) => {
+  // Get sourceDiv and index from the drag event data
+  const sourceDiv = JSON.parse(e.dataTransfer.getData("sourceDiv"));
+  const index = JSON.parse(e.dataTransfer.getData("index"));
+
+  if (sourceDiv !== "gameScreen") {
+    return;
+  }
+  // Get the position of the div where the media is dropped
+  const divElement = document.getElementById(sourceDiv);
+  const divXY = {
+    x: divElement.offsetLeft,
+    y: divElement.offsetTop,
   };
 
-  export const handleMediaDragEnd = ( e, setStateFunction ) => {
-    const sourceDiv = JSON.parse(e.dataTransfer.getData("sourceDiv"));
-    const index = JSON.parse(e.dataTransfer.getData("index"));
-    const divXY= {
-        x: document.getElementById(sourceDiv).offsetLeft ,
-        y :document.getElementById(sourceDiv).offsetTop
-      }
+  // Calculate the position of the media relative to the div
+  const posX = e.clientX - divXY.x;
+  const posY = e.clientY - divXY.y;
 
-    const posX = e.clientX - divXY.x;
-    const posY = e.clientY - divXY.y;
+  // Get the boundaries of the div that contains the media
+  const divRect = divElement.getBoundingClientRect();
+  
+  // Set maximum X and Y positions so the media (50x50) stays inside the div
+  const maxXPos = divRect.width - 60; // Subtract 50 for media width
+  const maxYPos = divRect.height - 60; // Subtract 50 for media height
 
-    // Ensure the character does not exceed the boundaries of the gameScreen
-    const divRect = document.getElementById(sourceDiv).getBoundingClientRect();
-    const maxXPos = divRect.width;
-    const maxYPos = divRect.height;
-    let newPosition = {};  
+  // Calculate new media position, keeping it inside the div boundaries
+  let newPosition = {
+    // Ensure X is within the bounds
+    x: Math.max(0, Math.min(posX, maxXPos)) ,
+    // Ensure Y is within the bounds
+    y: Math.max(0, Math.min(posY, maxYPos)) ,
+  };
 
-    //Character at boundaries
-    if (posX > 0 && posX < maxXPos && posY > 0 && posY < maxYPos) {
-    newPosition = {
-      x: posX + divXY.x,
-      y: posY + divXY.y,
-    };
-
-    // Handle cases where X or Y are out of bounds
-    } else {
-    let x = posX; 
-    let y= posY;
-
-    //Character's X is too large || less than 0 
-    if (posX <= 0){
-      x=1 + divXY.x ; //posX Minimum boundary?
-    }else{
-      x= divXY.x + maxXPos-1 ; //posX Maximum boundary
-    }
-
-    //Character's Y is too large || less than 0
-    if (posY <= 0){
-      y= 1 + divXY.x ; //posY Minimum boundary
-    }else{
-      y= divXY.x + maxYPos -1 ; //posY Maximum boundary
-    }
-
-    newPosition = { 
-      x: x,
-      y: y,
-    };
-
-    } 
-    setStateFunction(prevState => {
-      const updatedgameCharacters = [...prevState.gameCharacters];
-      updatedgameCharacters[index].mediaPos = newPosition;
-      return { gameCharacters: updatedgameCharacters };
-      });
-    };
-
+  // Update the state with the new position of the media
+  setStateFunction(prevState => {
+    const updatedGameCharacters = [...prevState.gameCharacters];
+    updatedGameCharacters[index].mediaPos = newPosition;
+    return { gameCharacters: updatedGameCharacters };
+  });
+};
  

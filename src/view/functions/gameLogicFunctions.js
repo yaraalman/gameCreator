@@ -1,39 +1,83 @@
 export function onPause(setStateFunction) {
   setStateFunction(prevState => {
-    prevState.gameCharacters = [...prevState.initialGameCharacters];
-    prevState.shapes = prevState.initialGameCharacters[prevState.indexCharacter]?.shapes || [];
-    prevState.gameCharacters.forEach((character, ) => {
-      let draggable='true';
-      let display =  'none';
-    });
-    return prevState;
+    // שוכפל את המצב הקודם
+    const newGameCharacters = [...prevState.initialGameCharacters].map(character => ({
+      ...character,
+      draggable: 'true', // הגדרת אפשרות גרירה
+      display: 'block'    // הגדרת תצוגה
+    }));
+
+    // אם יש אינדקס שנבחר, עדכן את ה-shapes
+    const selectedCharacterShapes = newGameCharacters[prevState.indexCharacter]?.shapes || [];
+
+    return {
+      ...prevState,
+      gameCharacters: newGameCharacters,
+      shapes: selectedCharacterShapes,
+    };
   });
 }
+
+
+///on variable change 
+ 
 export function onPlay(e , setStateFunction) {
-  setStateFunction(prevState => { 
+    setStateFunction(prevState => { 
       const gameScreen = document.getElementById('gameScreen');
       const screenRect = gameScreen.getBoundingClientRect();
       const dynamicObject = {}; 
+      dynamicObject.handleVariableChange = (variableName, newValue) => {
+        console.log("Inside handleVariableChange");
 
+        setStateFunction(prevState => ({
+            gameCharacters: prevState.gameCharacters.map(character => {
+                if (character.mediaData.categoryId === 7 && character.mediaData.variableName === variableName) {
+                    return {
+                        ...character,
+                        mediaData: {
+                            ...character.mediaData,
+                            initialValue: newValue
+                        }
+                    };
+                }
+                return character;
+            })
+        }));
+    };
        // עבור על כל הדמויות ועדכן את dynamicObject
       prevState.gameCharacters.forEach(character => {
+       
         if (character.mediaData.categoryId === 7) {
           dynamicObject[character.mediaData.variableName] = character.mediaData.initialValue;
         }
       });
-      console.log(dynamicObject );
+      console.log(dynamicObject);
+     
       const updatedCharacters = prevState.gameCharacters.map((character, index) => {
           const shapes = [...character.shapes];
           let position = { ...character.mediaPos };
-          let draggable = 'false';
-          let display = 'block';
-
+          let draggable = { ...character.mediaPos };
+          let display = { ...character.mediaPos };
+          
           // Call the recursive function to process the shapes
-          const generatedCode = shapesToCode(prevState.codeShapes, shapes, prevState.conditions);
-          console.log(generatedCode);
-          eval(generatedCode); 
+          const generatedCode =  shapesToCode(prevState.codeShapes, shapes, prevState.conditions);
+          console.log(generatedCode); 
+         
+          try {
+
+            eval(generatedCode);
+          } catch (error) {
+            console.error("Error evaluating generated code:", error);
+          }
+        
+
+          
+
+          position.x = Math.max(-10, Math.min(position.x, screenRect.width - 60));
+          position.y = Math.max(-10, Math.min(position.y, screenRect.height - 60));
 
           if (character.mediaData.categoryId === 7) {
+            console.log(dynamicObject);
             return {
               ...character,
               mediaData: {
@@ -59,6 +103,8 @@ export function onPlay(e , setStateFunction) {
       };
   });
 }
+
+
 function shapesToCode(codeShapes, shapes, conditions) {
   if (!shapes || shapes.length === 0) {
     return ''; 
@@ -70,7 +116,7 @@ function shapesToCode(codeShapes, shapes, conditions) {
   let shapeCode = `${codeShapes.find(item => item.shapeId === shape.shapeId).code}`;
   // Replace "inputValue" with shape.inputValue and "condition" with condition text
   if (shape.inputValue) {
-    shapeCode = shapeCode.replace( /inputValue/g, shape.inputValue);
+    shapeCode = shapeCode.replace(/inputValue/g, shape.inputValue);
     const condition = conditions.find(cond => cond.conditionName === shape.inputValue);
     if (condition) {
       shapeCode = shapeCode.replace(/condition/g, condition.conditionTxt);
@@ -127,3 +173,24 @@ export function  saveGame (initialGameCharacters , gameName )  {
       console.error('Error saving game characters:', error);
   });
 }
+
+
+/*   
+
+    // הוספת מאזין עבור הדמות שנלחצה
+    const characterElement = document.querySelector(`[data-id="${character.id}"]`);
+    if (characterElement) {
+        // אם הדמות מוסתרת, שנה את ה-display שלה ל-'block'
+        if (characterElement.style.display === 'none') {
+            characterElement.style.display = 'block';
+        }
+
+        // הוסף מאזין לאירוע 'click' על הדמות
+        characterElement.addEventListener('click', () => {
+            console.log("Character clicked:", character);
+            // כאן, תוכל להסתיר את הדמות כאשר היא נלחצת
+            characterElement.style.display = 'none'; // העלמת הדמות
+        });
+    }
+
+*/

@@ -1,5 +1,5 @@
 .homeBackground{
-  height: 480px;
+  height: 610px;
   width: 100%;
   position: relative;
   z-index:-1 ;
@@ -19,8 +19,8 @@
   width: 200px;
   padding: 25px;
   border-radius:15px; 
-  margin-left:180px; 
-  margin-top:-420px;
+  margin-left:225px; 
+  margin-top:-500px;
  
 }
 
@@ -36,12 +36,10 @@ a #letsCreate{
 
 a #CreativePlay{
   color: #1042b5;
-
 }
 
 a #socialPanel{
-  color: #98171d;
-  
+  color: #98171d; 
 }
 
 

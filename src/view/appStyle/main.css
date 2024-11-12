@@ -3,7 +3,8 @@
 
 body {
   background: linear-gradient( #3EC7F2 , white);
-  height: 470px;
+  overflow: hidden;
+  height: 585px;
   width: 100%;
 }
 body ::-webkit-scrollbar {

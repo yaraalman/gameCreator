@@ -31,6 +31,7 @@ export default class Login extends Component {
         fetch(`http://localhost:3001/form/${pageName}`)
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 this.setState({loginPage:data.page , loginImg:data.Imgs[0] , formInputs:data.formInputs, formButtons:data.formButtons});
 
             })
@@ -47,12 +48,12 @@ export default class Login extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
 
-        const { Email, Password } = this.state;
+        const { email, password } = this.state;
         
         fetch('http://localhost:3001/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ Email, Password })
+            body: JSON.stringify({ email, password })
         })
         .then(response => response.json())
         .then(data => {
@@ -120,13 +121,15 @@ export default class Login extends Component {
                 <div className="loginPage">
                     <Header />
                     <img className={loginImg.mediaName} src={loginImg.url} alt={loginImg.mediaName}/>
-                    <h1 className='title'> {loginPage.title}</h1>
+                    <h1 className='title'> {loginPage.title}   </h1>
                     <form id="LoginForm"  onSubmit={this.handleSubmit}>
+                        
                         {thisPageform}
                         {this.state.errorMessage && <p className="error-message">{this.state.errorMessage}</p>}
-                    </form>    
+                    </form>  
+                    
                 </div>
-
+                 
                 );
             }
 
