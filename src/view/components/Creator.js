@@ -356,8 +356,8 @@ export default class Creator extends Component {
                             data-id={index}
                             style={{ 
                                 position: 'absolute',
-                                top: character.mediaPos.y + screenRect.top,
-                                left: character.mediaPos.x + screenRect.left,
+                                top: character.mediaPos.y ,
+                                left: character.mediaPos.x ,
                                 visibility: character.display || 'visible', 
                                 }}
                             draggable = {character.draggable} 
@@ -373,8 +373,8 @@ export default class Creator extends Component {
                             data-id={index}
                             style={{ 
                                 position: 'absolute', 
-                                top: character.mediaPos.y + screenRect.top,
-                                left: character.mediaPos.x + screenRect.left,
+                                top: character.mediaPos.y ,
+                                left: character.mediaPos.x ,
                                 gridTemplateColumns: `repeat(${character.mediaData.columns}, 1fr)`, 
                                 gridTemplateRows: `repeat(${character.mediaData.rows}, 1fr)` 
                             }}
@@ -392,8 +392,8 @@ export default class Creator extends Component {
                         data-id={index}
                             style={{ 
                                 position:'absolute',
-                                top: character.mediaPos.y + screenRect.top,
-                                left: character.mediaPos.x + screenRect.left}}
+                                top: character.mediaPos.y ,
+                                left: character.mediaPos.x }}
                         >
                             <img  
                                 src={character.mediaData.url} 

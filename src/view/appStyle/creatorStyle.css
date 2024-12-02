@@ -49,6 +49,7 @@
 }
 
 #gameScreen{
+    position: relative;
     background:rgb(54, 9, 167);
     background-size: cover;
     background-position: center;
