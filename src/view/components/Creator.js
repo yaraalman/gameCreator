@@ -6,6 +6,7 @@ import {handleMediaDragStart, handleMediaDragEnd  }from '../functions/mediaDragA
 import { onPlay, onPause ,saveGame } from '../functions/gameLogicFunctions';
 import '../appStyle/main.css';
 import '../appStyle/creatorStyle.css';
+
 //import Rope3D from './Rope3D'
 export default class Creator extends Component {
     constructor(props) {
@@ -47,7 +48,7 @@ export default class Creator extends Component {
                     ? prevState.gameCharacters.map(character => ({
                         ...character,
                         draggable: false,  
-                        display: 'block'  
+                        display: 'visible'  
                     }))
                     : prevState.gameCharacters
                 }
@@ -120,16 +121,16 @@ export default class Creator extends Component {
                 const backgroundIndex = this.state.gameCharacters.findIndex( med => med.mediaData.categoryId === 2); //Returns the index of the element that has the last background; if there is no background, it returns -1.
                     gameScreenDiv.style.backgroundImage = `url(${media.url})`;
                 if (backgroundIndex === -1){ // No backgrounds in the array
-                    this.setState({ gameCharacters: this.state.gameCharacters.concat({mediaData:media , mediaPos :{x:10, y:10} ,draggable: 'true' ,display:'block',shapes:[]})});
+                    this.setState({ gameCharacters: this.state.gameCharacters.concat({mediaData:media , mediaPos :{x:10, y:10} ,draggable: 'true' ,display:'visible',shapes:[]})});
                 }else{//There are backgrounds in the array
                     this.setState(prevState => {
                         const updatedCharacters = [...prevState.gameCharacters];
-                        updatedCharacters[backgroundIndex]= {mediaData:media , mediaPos :{x:10 , y:10} ,draggable: 'true' ,display:'block'  , shapes:[]};
+                        updatedCharacters[backgroundIndex]= {mediaData:media , mediaPos :{x:10 , y:10} ,draggable: 'true' ,display:'visible'  , shapes:[]};
                         return { gameCharacters: updatedCharacters , initialGameCharacters : updatedCharacters};
                     });
                 }
          }else {// if the media is not a background insert to the gameCaracters 
-            this.setState({ gameCharacters: this.state.gameCharacters.concat({mediaData:media , mediaPos :{x:10 , y:10} ,draggable: 'true' ,display:'block' , shapes:[]})});
+            this.setState({ gameCharacters: this.state.gameCharacters.concat({mediaData:media , mediaPos :{x:10 , y:10} ,draggable: 'true' ,display:'visible' , shapes:[]})});
          }
     };
     
@@ -223,11 +224,7 @@ export default class Creator extends Component {
                 console.error('Error fetching page data:', error);
             });
 
-            const handleKeyDown = (e) => {
-                if (this.state.isPlaying) {
-                        onPlay(e, this.setState.bind(this));
-                }
-            };
+           
         
             
             if (selectedGame) {
@@ -250,6 +247,12 @@ export default class Creator extends Component {
                     });
             }
 
+            const handleKeyDown = (e) => {
+                if (this.state.isPlaying) {
+                        onPlay(e, this.setState.bind(this));
+                }
+            };
+            
             window.addEventListener('keydown', handleKeyDown);
             this.handleKeyDown = handleKeyDown;
 
@@ -338,7 +341,7 @@ export default class Creator extends Component {
             }
 
             const screenRect = gameScreen.getBoundingClientRect(); 
-            
+            console.log(screenRect);
             const backgroundIndex = this.state.gameCharacters.findIndex( med => med.mediaData.categoryId === 2); //Returns the index of the element that has the last background; if there is no background, it returns -1.
             if (backgroundIndex !== -1){
                 const gameScreenDiv = document.getElementById('gameScreen');
@@ -350,11 +353,12 @@ export default class Creator extends Component {
                 if(character.mediaData.categoryId === 7){ //variables
                     gameElements.push(
                         <div className='variable-display' 
+                            data-id={index}
                             style={{ 
                                 position: 'absolute',
                                 top: character.mediaPos.y + screenRect.top,
                                 left: character.mediaPos.x + screenRect.left,
-                                display: character.display || 'block', 
+                                visibility: character.display || 'visible', 
                                 }}
                             draggable = {character.draggable} 
                             onDragStart={(e) => this.state.isPlaying ? null : handleMediaDragStart(e, character, index, 'gameScreen')}
@@ -366,6 +370,7 @@ export default class Creator extends Component {
                 }else if(character.mediaData.categoryId === 6){ //grids
                     gameElements.push(   
                         <div className='grid-container' 
+                            data-id={index}
                             style={{ 
                                 position: 'absolute', 
                                 top: character.mediaPos.y + screenRect.top,
@@ -384,7 +389,9 @@ export default class Creator extends Component {
                 }else{
                     gameElements.push(
                         <div className='characters' 
-                            style={{ position:'absolute',
+                        data-id={index}
+                            style={{ 
+                                position:'absolute',
                                 top: character.mediaPos.y + screenRect.top,
                                 left: character.mediaPos.x + screenRect.left}}
                         >
@@ -392,7 +399,7 @@ export default class Creator extends Component {
                                 src={character.mediaData.url} 
                                 alt={character.mediaData.mediaName}
                                 draggable={character.draggable}
-                                style={{display:character.display}}
+                                style={{visibility:character.display}}
                                 onDragStart={(e) => this.state.isPlaying ? null : handleMediaDragStart(e, character, index, 'gameScreen')} 
                             />
                         </div>);
@@ -438,12 +445,12 @@ export default class Creator extends Component {
                 };
         
                 const selectedCondition = this.state.conditions.find(condition => condition.conditionName === value);
-                if (selectedCondition && selectedCondition.needsInput === 1) {
+                if (selectedCondition && selectedCondition.needsInput > 0) {
                     updatedShapes[index].conditionInputType = selectedCondition.condInputType;
                 } else {
                     updatedShapes[index].conditionInputType = null;
                 }
-
+                
                 const updatedCharacters = [...prevState.gameCharacters];
                 updatedCharacters[prevState.indexCharacter].shapes = updatedShapes;
         
@@ -489,22 +496,35 @@ export default class Creator extends Component {
                             onChange={(e) => handleshapeInputChange(e, index)}
                         />
                     ) : inputType === 'variable' ? (
-                        <select
-                            value={shape.inputValue || ""}
-                            className='shapeInput'
-                            onChange={(e) => handleshapeInputChange(e, index)}
-                        >
+                            <select
+                                value={shape.inputValue || ""}
+                                className='shapeInput'
+                                onChange={(e) => handleshapeInputChange(e, index)}
+                            >
                             <option value="" disabled>Select variable</option>
                             {this.state.gameCharacters
                                 .filter(Character => Character.mediaData.categoryId === 7)
-                                .map(Character => (
-                                    <option key={Character.conditionId} value={Character.mediaData.variableName}>
+                                .map((Character, idx)=> (
+                                    <option key={idx} value={Character.mediaData.variableName}>
                                         {Character.mediaData.variableName}
                                     </option>
                                 ))}
                         </select>
-                    ) : null}
-        
+                    ) :  inputType === 'media' ? ( 
+                            <select
+                                value={shape.inputValue || ""}
+                                className='shapeInput'
+                                onChange={(e) => handleshapeInputChange(e, index)}
+                            >
+                            <option value="" disabled>Select media </option>
+                            {this.state.gameCharacters
+                                .map((Character, idx) => (
+                                    <option key={idx} value={idx}>
+                                        {Character.mediaData.mediaName}
+                                    </option>
+                                ))}
+                        </select>):null}
+               
                     {shape.conditionInputType === "media" ? (
                         <select
                             value={shape.conditionInput || ""}
@@ -513,7 +533,7 @@ export default class Creator extends Component {
                         >
                             <option value="" disabled>Select variable</option>
                             {this.state.gameCharacters
-                                .filter(Character => Character.mediaData.categoryId !== 7 && Character.mediaData.categoryId !== 2)
+                                .filter(Character => Character.mediaData.categoryId !== 7 )
                                 .map((Character, idx) => (
                                     <option key={Character.conditionId} value={idx}>
                                         {Character.mediaData.mediaName}
@@ -528,8 +548,22 @@ export default class Creator extends Component {
                             value={shape.conditionInput || ""}
                             onChange={(e) => handleConditionInputChange(e, index)}
                         />
-                    ) : null}
-        
+                    )  : shape.conditionInputType === "variable" ? (
+                            <select
+                                value={shape.inputValue || ""}
+                                className='conditionInput'
+                                onChange={(e) => handleConditionInputChange(e, index)}
+                            >
+                            <option value="" disabled>Select variable</option>
+                            {this.state.gameCharacters
+                                .filter(Character => Character.mediaData.categoryId === 7)
+                                .map((Character, idx)=> (
+                                    <option key={idx} value={Character.mediaData.variableName}>
+                                        {Character.mediaData.variableName}
+                                    </option>
+                                ))}
+                        </select>): null}
+                
                     <img 
                         className='userShapes' 
                         src={codeShape?.url} 

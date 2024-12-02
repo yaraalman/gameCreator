@@ -117,19 +117,3 @@ a:hover {
   justify-content: center;
 }
 
-.game-card {
-  background-color: rgba(16, 16, 94, 0.477);
-  height: 150px;
-  width: 250px;
-  padding: 10px;
-  border-radius: 5px;
-  color: rgb(245, 231, 231); 
-  margin: 10px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.game-card:hover {
-  transform: scale(1.05);
-}

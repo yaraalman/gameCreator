@@ -4,12 +4,12 @@ export function onPause(setStateFunction) {
     const newGameCharacters = [...prevState.initialGameCharacters].map(character => ({
       ...character,
       draggable: 'true', // הגדרת אפשרות גרירה
-      display: 'block'    // הגדרת תצוגה
+      display: 'visible'    // הגדרת תצוגה
     }));
 
     // אם יש אינדקס שנבחר, עדכן את ה-shapes
     const selectedCharacterShapes = newGameCharacters[prevState.indexCharacter]?.shapes || [];
-
+   
     return {
       ...prevState,
       gameCharacters: newGameCharacters,
@@ -26,24 +26,40 @@ export function onPlay(e , setStateFunction) {
       const gameScreen = document.getElementById('gameScreen');
       const screenRect = gameScreen.getBoundingClientRect();
       const dynamicObject = {}; 
-      dynamicObject.handleVariableChange = (variableName, newValue) => {
-        console.log("Inside handleVariableChange");
-
-        setStateFunction(prevState => ({
-            gameCharacters: prevState.gameCharacters.map(character => {
-                if (character.mediaData.categoryId === 7 && character.mediaData.variableName === variableName) {
-                    return {
-                        ...character,
-                        mediaData: {
-                            ...character.mediaData,
-                            initialValue: newValue
-                        }
-                    };
-                }
-                return character;
-            })
-        }));
+   
+    const setDisplay = (index, newDisplay) => {
+      setStateFunction(prevState => {
+        console.log("new display:",newDisplay);
+        const updatedCharacters = [...prevState.gameCharacters];
+        updatedCharacters[index].display = newDisplay;
+        return {
+          ...prevState,
+          gameCharacters: updatedCharacters
+        };
+      });
     };
+
+   
+    const handleVariableChange = (variableName, newValue) => {
+      console.log("Inside handleVariableChange");
+      console.log(dynamicObject);
+      setStateFunction(prevState => ({
+          gameCharacters: prevState.gameCharacters.map(character => {
+              if (character.mediaData.categoryId === 7 && character.mediaData.variableName === variableName) {
+                  return {
+                      ...character,
+                      mediaData: {
+                          ...character.mediaData,
+                          initialValue: newValue
+                      }
+                  };
+              }
+              return character;
+          })
+      }));
+  }; 
+
+
        // עבור על כל הדמויות ועדכן את dynamicObject
       prevState.gameCharacters.forEach(character => {
        
@@ -62,7 +78,7 @@ export function onPlay(e , setStateFunction) {
           // Call the recursive function to process the shapes
           const generatedCode =  shapesToCode(prevState.codeShapes, shapes, prevState.conditions);
           console.log(generatedCode); 
-         
+          console.log( dynamicObject[character.mediaData.variableName]); 
           try {
 
             eval(generatedCode);
@@ -71,13 +87,10 @@ export function onPlay(e , setStateFunction) {
           }
         
 
-          
-
           position.x = Math.max(-10, Math.min(position.x, screenRect.width - 60));
           position.y = Math.max(-10, Math.min(position.y, screenRect.height - 60));
 
           if (character.mediaData.categoryId === 7) {
-            console.log(dynamicObject);
             return {
               ...character,
               mediaData: {
@@ -86,14 +99,14 @@ export function onPlay(e , setStateFunction) {
               },
               mediaPos: position,
               draggable: draggable,
-              display: display,
+              
             };
           }
           return {
               ...character,
               mediaPos: position,
               draggable: draggable,
-              display: display,
+              
           };
       });
 
@@ -137,9 +150,13 @@ function shapesToCode(codeShapes, shapes, conditions) {
     nestedShapeCode += shapesToCode(codeShapes, [remainingShapes[i]], conditions);
     i++;
   }
-  
+ 
   // Add the nested shapes code to the current shape's code
-  shapeCode = shapeCode.slice(0, -1) + nestedShapeCode + shapeCode.slice(-1);
+  if (`${codeShapes.find(item => item.shapeId === shape.shapeId).shapeName}` === "On Click"){
+    shapeCode = shapeCode.slice(0, -4) + nestedShapeCode + shapeCode.slice(-4);
+  }
+  else{shapeCode = shapeCode.slice(0, -1) + nestedShapeCode + shapeCode.slice(-1);}
+  
  
   // Continue processing the remaining shapes that have the same or lower level
   const nextRemainingShapes = remainingShapes.slice(i);
@@ -176,21 +193,43 @@ export function  saveGame (initialGameCharacters , gameName )  {
 
 
 /*   
+   
 
-    // הוספת מאזין עבור הדמות שנלחצה
-    const characterElement = document.querySelector(`[data-id="${character.id}"]`);
-    if (characterElement) {
-        // אם הדמות מוסתרת, שנה את ה-display שלה ל-'block'
-        if (characterElement.style.display === 'none') {
-            characterElement.style.display = 'block';
-        }
 
-        // הוסף מאזין לאירוע 'click' על הדמות
-        characterElement.addEventListener('click', () => {
-            console.log("Character clicked:", character);
-            // כאן, תוכל להסתיר את הדמות כאשר היא נלחצת
-            characterElement.style.display = 'none'; // העלמת הדמות
-        });
-    }
+    const setPosition = (index, newPosition) => {
+      setStateFunction(prevState => {
+        const updatedCharacters = [...prevState.gameCharacters];
+        updatedCharacters[index].mediaPos = newPosition;
+        return {
+          ...prevState,
+          gameCharacters: updatedCharacters
+        };
+      });
+    };
+  
+    const setDraggable = (index, newDraggable) => {
+      console.log("new draggable:",newDraggable);
+      setStateFunction(prevState => {
+        const updatedCharacters = [...prevState.gameCharacters];
+        updatedCharacters[index].draggable = newDraggable;
+        return {
+          ...prevState,
+          gameCharacters: updatedCharacters
+        };
+      });
+    };
+  
+    const setDisplay = (index, newDisplay) => {
+      setStateFunction(prevState => {
+        console.log("new display:",newDisplay);
+        const updatedCharacters = [...prevState.gameCharacters];
+        updatedCharacters[index].display = newDisplay;
+        return {
+          ...prevState,
+          gameCharacters: updatedCharacters
+        };
+      });
+    };
+  
 
 */

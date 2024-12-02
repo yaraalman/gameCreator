@@ -19,32 +19,38 @@ const galleryModal = ({ closeModal , showModal , updateGameCharactersAndBackgrou
     const variableInput =[];
     if (openCategory.categoryId === 7) { // variable input 
         variableInput.push(
-            <div className='variableInput' >
-                <input className='inputFild' type='text' id='variableName' placeholder="Please enter a name for the new variable:" />
-                <input className='inputFild' type='text' id='initialValue' placeholder="Please enter the initial value:" />
-                <button id='addButton' onClick={() => {
-                    const variableName = document.getElementById('variableName').value;
-                    const initialValue = document.getElementById('initialValue').value;
-                    if (!variableName || !initialValue) {
-                        return;
-                    }
-                    const gameScreenDiv = document.getElementById('gameScreen');
-                    const gameScreenRect = gameScreenDiv.getBoundingClientRect();
-                    // "Creating a new character variable with an initial value."
-                    const newVariableCharacter = {
-                        mediaData: { mediaId: -1 ,categoryId:7, variableName: variableName, initialValue: initialValue },
-                        mediaPos: {x:10 , y:10},
-                        draggable: 'true',
-                        display: 'block',
-                        shapes: []
-                    };
-                    setState(prevState => ({
-                        gameCharacters: prevState.gameCharacters.concat(newVariableCharacter)
-                    }));
-                }}>
-                    Add
-                </button>
-            </div>
+            <div className='variableInput'>
+            <input className='inputFild' type='text' id='variableName' placeholder="Please enter a name for the new variable:" />
+            <input className='inputFild' type='number' id='initialValue' placeholder="Please enter the initial value:" />
+            <button id='addButton' onClick={() => {
+                const variableName = document.getElementById('variableName').value;
+                let initialValue = document.getElementById('initialValue').value;
+        
+                // אם לא הוזן שם או אם שדה הערך התחלתי ריק, לא נבצע פעולה
+                if (!variableName || initialValue === "") {
+                    return;
+                }
+        
+                // המרת הערך למספר, אם הוא לא מספר (למשל תו לא חוקי), נכניס 0
+                initialValue = isNaN(initialValue) ? 0 : Number(initialValue);
+        
+                // יצירת דמות חדשה עם המשתנה החדש
+                const newVariableCharacter = {
+                    mediaData: { mediaId: -1, categoryId: 7, variableName: variableName, initialValue: initialValue },
+                    mediaPos: {x: 10, y: 10},
+                    draggable: true, // תוקן ל-true, במקום 'true' כ-string
+                    display: 'block',
+                    shapes: []
+                };
+        
+                // עדכון המצב עם הדמות החדשה
+                setState(prevState => ({
+                    gameCharacters: prevState.gameCharacters.concat(newVariableCharacter)
+                }));
+            }}>
+                Add
+            </button>
+        </div>
         );
     }
     return (

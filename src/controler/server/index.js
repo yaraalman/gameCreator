@@ -25,7 +25,7 @@ const {deleteElementsByGameId}=require('../../model/deleteElementsByGameId');
 const {getGameByNameAndUserId}=require('../../model/getGameByNameAndUserId');
 const {getGamesByUserId}=require('../../model/getGamesByUserId');
 const {getGameById}=require('../../model/getGameById');
-
+const {getGameElementsPosByGameId}=require('../../model/getGameElementsPosByGameId');
 app.use(cors());
 app.use(express.json());
 
@@ -34,9 +34,9 @@ app.use(express.json());
 app.get('/test', async (req, res) => {
   try { 
         
-     let games = await getGamesByUserId(1);
+     let test = await getGameElementsPosByGameId(3);
          
-      res.json(games);
+      res.json(test);
   } catch (error) {
       console.error('Error fetching data:', error);
       res.status(500).json({ error: 'Failed to fetch data' });
@@ -46,6 +46,7 @@ app.get('/test', async (req, res) => {
 app.get("/", (req, res) => {
     res.json({ message: "Hello from server!" });
 });
+
 
 app.get("/menus/:pageName", async (req, res) => {
   const pageName=req.params.pageName;
@@ -93,16 +94,69 @@ app.get("/text/:pageName", async(req, res) => {
   });
 
   app.get("/creativPlay/:userId", async (req, res) => {
-    const userId=req.params.userId;
-    try{
-          let games = await getGamesByUserId(userId);
-          res.json({games});   
-    }catch (error){
-      console.error('Error fetching games:', error);
-      res.status(500).json({ error: 'Failed to fetch games' });
-    }  
-  }
-  );
+    const userId = req.params.userId;
+    try {
+      // שליפת המשחקים של המשתמש
+      let games = await getGamesByUserId(userId);
+  
+      // שליפת כל האלמנטים לכל משחק והמרת RowDataPacket לאובייקטים רגילים
+      let allGamesElements = await Promise.all(
+        games.map(async (game) => {
+          let elements = await getGameElementsPosByGameId(game.gameId);
+          return {
+            gameId: game.gameId,
+            elements: elements.map((row) => ({
+              ...row,
+              mediaPos: JSON.parse(row.mediaPos), // פענוח mediaPos ממחרוזת JSON
+            })),
+          };
+        })
+      );
+  
+      // הוספת mediaData לכל אלמנט
+      let allElements = await Promise.all(
+        allGamesElements.flatMap((gameElement) =>
+          gameElement.elements.map(async (element) => {
+            let mediaData;
+            if (element.mediaId === -1) {
+              // שימוש ב-extraContent אם mediaId הוא -1
+              mediaData = JSON.parse(element.extraContent);
+            } else {
+              // שליפת mediaData לפי mediaId
+              mediaData = await getMediaById(element.mediaId);
+            }
+            return {
+              gameId: gameElement.gameId,
+              mediaPos: element.mediaPos,
+              mediaData: mediaData,
+            };
+          })
+        )
+      );
+  
+      // מיזוג האלמנטים לתוך המשחקים
+      games = games.map((game) => {
+        let elements = allElements.filter((elem) => elem.gameId === game.gameId);
+        return {
+          ...game,
+          gameElements: elements, // עדכון האלמנטים למשחק המתאים
+        };
+      });
+  
+      // שליפת קטגוריות והמדיה שלהן
+      let categories = await getGalleryCategoreies();
+      let allMedia = [];
+      for (let category of categories) {
+        allMedia = allMedia.concat(await getMediaByCategoryId(category.categoryId));
+      }
+  
+      // החזרת התוצאות כ-JSON
+      res.json({ games, allMedia });
+    } catch (error) {
+      console.error("Error fetching games:", error);
+      res.status(500).json({ error: "Failed to fetch games" });
+    }
+  });
   app.get("/creator/:pageName", async (req, res) => {
     const pageName=req.params.pageName;
     try{
